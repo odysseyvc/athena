@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7. The owner&#x27;s page, and agents that start a command | Athena</title>
+<meta name="description" content="How the owner gets a page of controls that no other program and no other site can use: a one-time link in place of a password, four checks against the owner&#x27;s own browser, captured text shown only as text, and one door for agents that call an address and agents that can only start a command.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Athena</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">7.1</span>The problem: the only part that can change things</a></li><li><a href="#link"><span class="n">7.2</span>Signing in without a password</a></li><li><a href="#browser"><span class="n">7.3</span>The owner&#x27;s own browser is the threat</a></li><li><a href="#text"><span class="n">7.4</span>Showing other people&#x27;s text</a></li><li><a href="#controls"><span class="n">7.5</span>What the page does</a></li><li><a href="#agents"><span class="n">7.6</span>Agents that cannot call an address</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li class="here"><a href="the-owners-page.html"><span class="n">7</span>The owner&#x27;s page, and agents that start a command</a></li><li><a href="measuring.html"><span class="n">8</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">9</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part III · Use</div>
+<div class="chno">Chapter 7</div>
+<h1>The owner&#x27;s page, and agents that start a command</h1>
+<p class="lede">How the owner gets a page of controls that no other program and no other site can use: a one-time link in place of a password, four checks against the owner's own browser, captured text shown only as text, and one door for agents that call an address and agents that can only start a command.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Give the owner of a local service a page of controls without giving every other program on the machine the same controls.</li>
+<li>Sign a person in to a local page without a password.</li>
+<li>Stop another site in the same browser from using the owner's session.</li>
+<li>Show captured text on a page without letting it become part of the page.</li>
+<li>Connect agents that can call an address, and agents that can only start a command, through one door.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">7.1</span>The problem: the only part that can change things</h2>
+<p>Everything an agent can reach in Athena is read-only (<a href="serving.html">Chapter 6</a>). The owner needs more than that: to pause, to let an agent in, to take a key away, to say yes to a waiting request, to forget the last ten minutes. A command line does all of this and almost nobody will use it. A page in the browser is what people expect, and it is also the first part of the system that can change something. If any program on the machine, or any web page open in the same browser, could reach it, the careful design of the reading side would be worth nothing.</p>
+
+<h2 id="link"><span class="n">7.2</span>Signing in without a password</h2>
+<p>A password for a program on your own machine is one more secret to keep, and there is a better proof available: being able to read the data folder. Only programs running as the owner can.</p>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>One-time link</dt><dd>An address that signs its opener in once and then stops working. Here it carries a time and a signature made with a key that lives in the data folder; the server checks the signature, checks that the time is within two minutes, and remembers that the link has been used.</dd></dl></div>
+<p>The icon near the clock and the command <code>athena open</code> both make such a link and hand it to the browser. The server answers with a session cookie and sends the browser on to the page, so the link itself is not left in the address bar. A client's token is not accepted here at all: the two doors share nothing.</p>
+<pre><code>def link(data, port, now=None):
+    stamp = f"{int(now or time.time())}-{secrets.token_hex(6)}"
+    return f"http://127.0.0.1:{port}/open?k={stamp}.{_sign(_secret(data), stamp)}"</code></pre>
+
+<h2 id="browser"><span class="n">7.3</span>The owner's own browser is the threat</h2>
+<p>Once the cookie is set, the browser will send it to this address whenever anything asks it to. Two well-known attacks follow.</p>
+<div class="box definition"><div class="label">Definitions</div>
+<dl class="terms">
+<dt>Cross-site request forgery</dt><dd>A page on another site makes the owner's browser send a request to this one, and the browser attaches the owner's cookie to it.</dd>
+<dt>DNS rebinding</dt><dd>A hostile site first answers from its own server and then points its own name at 127.0.0.1, so that its script, which the browser believes is still talking to the hostile site, is in fact talking to a program on this machine.</dd>
+</dl></div>
+<p>Four checks, each cheap, are made in a fixed order on every request to the page's interface:</p>
+<ol>
+<li><b>Is it this address?</b> The Host header must be this machine's own address and port. A rebinding site arrives under its own name and is refused.</li>
+<li><b>Is it the owner?</b> The session cookie must be one this run of the program issued.</li>
+<li><b>Is it their own click?</b> A change must be a POST carrying a header that a page on another site cannot add without the browser asking this server first, and this server never says yes.</li>
+<li><b>Does the browser agree?</b> If the browser states where the request came from, it must be this address.</li>
+</ol>
+<p>The cookie is also marked so that the browser does not send it with requests started by other sites. Any one of these would stop the common attack; they are all there because each fails differently. All of them, and the protocol address's own refusal of a foreign origin (which the current protocol specification requires), are covered by tests. <span class="g v">Verified</span></p>
+
+<h2 id="text"><span class="n">7.4</span>Showing other people's text</h2>
+<p>The page shows window titles and screen text, which were written by strangers (<a href="whose-words.html">Chapter 4</a>). On a web page that is a second version of the same problem: text that contains markup can become script. Two rules deal with it. The page is three fixed files, and a content security policy tells the browser to run no script and apply no style but those files. And the script never builds markup from data: every captured string reaches the page as a text node. A test reads the script and fails if it ever uses one of the calls that would break that rule.</p>
+<p>What the owner sees comes through the same function an agent's request goes through, as a client called <code>owner</code>. So the owner sees the same marks an agent would: quoted text is shown as a quotation, a withheld piece is shown as withheld, and the owner's own looking is a line in the log.</p>
+
+<h2 id="controls"><span class="n">7.5</span>What the page does</h2>
+<div class="tablewrap"><table>
+<caption><b>Table 7.1.</b> The sections of the page.</caption>
+<thead><tr><th>Section</th><th>What it is for</th></tr></thead>
+<tbody>
+<tr><th>Now</th><td>The last hour as an agent would be given it.</td></tr>
+<tr><th>Approvals</th><td>Each waiting request with its exact inputs, and two buttons.</td></tr>
+<tr><th>Agents</th><td>Who has a key, what it opens, what each last asked for; make a key, take one away.</td></tr>
+<tr><th>About you</th><td>The owner's own notes, editable; a model's statements with their evidence and a button reading "This is wrong".</td></tr>
+<tr><th>Search, Days</th><td>The same search and day summary agents get.</td></tr>
+<tr><th>Privacy</th><td>Forget the last minutes; add to the never-record list; where the folder is and what the last run cost.</td></tr>
+<tr><th>Log</th><td>Every request, allowed or refused.</td></tr>
+</tbody></table></div>
+<p>"This is wrong" matters more than it looks. A model of a person that the person cannot correct will drift, and nothing in the evidence can show it. A statement the owner rejects is retired with its dates and the reason, like one the evidence stopped supporting, and it is no longer served as holding.</p>
+<p>The icon near the clock is deliberately small: whether recording is on, pause for half an hour, two hours or until resumed, and a notice when a request starts waiting. The notice names the client and nothing from the request, because a request's inputs are chosen by the agent and a notification is not a place to show them.</p>
+
+<h2 id="agents"><span class="n">7.6</span>Agents that cannot call an address</h2>
+<p>Most coding agents can be given an address on the same machine and a header to send. Some desktop assistants cannot: they reach remote servers from their maker's cloud, which cannot see this machine at all, and locally they can only start a command and speak the protocol over its input and output. <span class="g v">Verified</span> from the vendors' documentation, November 2026.</p>
+<p>The answer is a second way in that is not a second door. <code>athena stdio</code> is a command an assistant can start. It holds no data and decides nothing. Each call it receives is passed to the server on this machine with that client's own key, taken from the environment, which is what the protocol asks of a local server. Scopes, approvals and the log are therefore the same on both routes, and there is still one function through which everything served must pass.</p>
+<pre><code>def run(tool, **args):
+    r = httpx.post(url, headers={"Authorization": f"Bearer {token}", ...},
+                   json={"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                         "params": {"name": tool, "arguments": args}})
+    if r.status_code == 401:
+        return json.dumps({"error": "Athena does not accept this client's key. ..."})
+    return r.json()["result"]["content"][0]["text"]</code></pre>
+<p>What each kind of agent must be given, an address and a header or a command and a variable, is a table of data in one file, taken from each vendor's own page. The page and the command <code>athena connect</code> print the exact lines. Athena does not write into another program's settings.</p>
+
+<div class="box caution"><div class="label">What went wrong, and what is not known</div>
+<p>The routes were tested with the protocol's own client library over both transports, and one assistant reads over HTTP through its own connection code. No other vendor's agent has been connected for real: the shapes in the table are read from documentation, not observed. <span class="g u">Unverified</span></p>
+<p>The first figure the page showed for cost was "1548% of one processor core", true of the two seconds after start in which libraries load, and worthless. A cost is now shown only after six minutes of running.</p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>The page that can change things has its own door: a one-time link signed with a key in the data folder.</li>
+<li>Host, session, an unforgeable header and the browser's stated origin are checked, in that order, on every request.</li>
+<li>Captured text reaches the page only as text, under a policy that runs nothing but three fixed files.</li>
+<li>The owner sees what an agent would, with the same marks, and can call a model's statement wrong.</li>
+<li>An agent that can only start a command is given a pass-through, not a second copy of the door.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>The one-time link is valid for two minutes. What could another program running as the owner do in that time? Does shortening it help?</li>
+<li>Which of the four checks stops DNS rebinding, and why does the cookie's same-site mark not?</li>
+<li>The notification names the client but not the request. Give an input an agent could choose that would make a notification dangerous to show.</li>
+<li>Extend the design: an owner wants to approve from their phone. What has to change about the door, and what must not?</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a href="serving.html"><span class="dir">Previous</span>6. Serving: keys, rooms and a log</a><a class="next" href="measuring.html"><span class="dir">Next</span>8. Measuring it</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

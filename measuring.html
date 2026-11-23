@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>7. Measuring it | Athena</title>
+<title>8. Measuring it | Athena</title>
 <meta name="description" content="How to score a system that watches a private life without using that life as test data, why a rule scored on the cases it was tuned on flatters itself, and how cost decides between two options that score alike.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
@@ -15,11 +15,11 @@
 <a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Athena</a>
 <nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
 </div></header>
-<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">7.1</span>The problem: &quot;it seems to work&quot; about a system nobody can inspect</a></li><li><a href="#world"><span class="n">7.2</span>A made-up fortnight</a></li><li><a href="#results"><span class="n">7.3</span>What was measured</a></li><li><a href="#tuned"><span class="n">7.4</span>A rule scored on its own homework</a></li><li><a href="#cost"><span class="n">7.5</span>Cost beside quality</a></li><li><a href="#limits"><span class="n">7.6</span>What these numbers do not show</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li class="here"><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">8.1</span>The problem: &quot;it seems to work&quot; about a system nobody can inspect</a></li><li><a href="#world"><span class="n">8.2</span>A made-up fortnight</a></li><li><a href="#results"><span class="n">8.3</span>What was measured</a></li><li><a href="#tuned"><span class="n">8.4</span>A rule scored on its own homework</a></li><li><a href="#cost"><span class="n">8.5</span>Cost beside quality</a></li><li><a href="#limits"><span class="n">8.6</span>What these numbers do not show</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="the-owners-page.html"><span class="n">7</span>The owner&#x27;s page, and agents that start a command</a></li><li class="here"><a href="measuring.html"><span class="n">8</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">9</span>What is built</a></li></ol></div></div></aside>
 <main><article class="text">
 <header class="opener">
 <div class="part">Part IV · Knowing it works</div>
-<div class="chno">Chapter 7</div>
+<div class="chno">Chapter 8</div>
 <h1>Measuring it</h1>
 <p class="lede">How to score a system that watches a private life without using that life as test data, why a rule scored on the cases it was tuned on flatters itself, and how cost decides between two options that score alike.</p>
 </header>
@@ -31,19 +31,19 @@
 <li>State plainly what a set of measurements does not show.</li>
 </ul></div>
 
-<h2 id="problem"><span class="n">7.1</span>The problem: "it seems to work" about a system nobody can inspect</h2>
+<h2 id="problem"><span class="n">8.1</span>The problem: "it seems to work" about a system nobody can inspect</h2>
 <p>A recorder runs in the background and an agent reads from it now and then. If its search misses, or it attributes someone else's sentence to its owner, nobody is watching. The only way to know is to ask it questions whose answers are known.</p>
 <p>The natural test data is the owner's real days, and that is the one thing that must not be copied into a test file or shown to whoever is building the system. So the data is made up.</p>
 
-<h2 id="world"><span class="n">7.2</span>A made-up fortnight</h2>
+<h2 id="world"><span class="n">8.2</span>A made-up fortnight</h2>
 <p>The evaluation writes fourteen days of records into a temporary folder: 24 <em>topics</em>, each one thing a person did on one day. A topic has a window, a few lines that were on its screen, sometimes a passage the person typed, sometimes a file. Around them are sixty filler windows that match nothing.</p>
 <p>Each topic has three questions: one in its own words ("Kestrel Robotics deck") and two in other words ("the startup making machines that pick items in storage buildings"). A search is right for a question if any of its first five results is a record of that topic.</p>
 <div class="box example"><div class="label">Example</div>
 <p>One topic: a spreadsheet titled "Q3 burn model.xlsx", with lines on screen such as "Runway 14 months at current hiring plan". Its keyword question is "Q3 burn model runway". Its other-words questions are "how many months of cash are left" and "the spreadsheet about spending and hiring freeze". Every company, name and number is invented.</p></div>
 
-<h2 id="results"><span class="n">7.3</span>What was measured</h2>
+<h2 id="results"><span class="n">8.3</span>What was measured</h2>
 <div class="tablewrap"><table>
-<caption><b>Table 7.1.</b> The evaluation's results. <span class="g v">Verified</span>, 23 November 2026, one laptop.</caption>
+<caption><b>Table 8.1.</b> The evaluation's results. <span class="g v">Verified</span>, 23 November 2026, one laptop.</caption>
 <thead><tr><th>What</th><th>Result</th><th>Sample</th></tr></thead>
 <tbody>
 <tr><th>Search, question uses the record's words</th><td>100% in the first five (42% as first built)</td><td>24 questions</td></tr>
@@ -56,15 +56,15 @@
 <tr><th>Injections withheld, with the classifier</th><td>9 of 10; 2 of 12 false alarms</td><td>the later set</td></tr>
 </tbody></table></div>
 
-<h2 id="tuned"><span class="n">7.4</span>A rule scored on its own homework</h2>
+<h2 id="tuned"><span class="n">8.4</span>A rule scored on its own homework</h2>
 <p>The two rows for the pattern list are the most useful thing in the table. The list was changed until it caught all 30 injections in the first set with no false alarm. Anyone can do that with enough patterns. The score that says something is the one on cases the rule has never seen: 4 of 10.</p>
 <div class="box definition"><div class="label">Definition</div>
 <dl class="terms"><dt>Held-out set</dt><dd>Test cases that are written, put aside, and never used to change the thing being tested. Once a case has been used to fix a rule, it is no longer held out.</dd></dl></div>
 <p>The same caution applies to the search figures, less sharply: the questions "in other words" were written by the same person who chose the model, though the model was not changed in response to them.</p>
 
-<h2 id="cost"><span class="n">7.5</span>Cost beside quality</h2>
+<h2 id="cost"><span class="n">8.5</span>Cost beside quality</h2>
 <div class="tablewrap"><table>
-<caption><b>Table 7.2.</b> What the running service costs. <span class="g v">Verified</span> on one laptop, 23 November 2026, over runs of minutes to an hour and a half.</caption>
+<caption><b>Table 8.2.</b> What the running service costs. <span class="g v">Verified</span> on one laptop, 23 November 2026, over runs of minutes to an hour and a half.</caption>
 <thead><tr><th>Cost</th><th>Measured</th><th>Note</th></tr></thead>
 <tbody>
 <tr><th>Processor</th><td>0.7% of one core over 85 minutes</td><td>before search indexing was added; not re-measured over as long since</td></tr>
@@ -75,7 +75,7 @@
 </tbody></table></div>
 <p>Three decisions were made by cost, where quality was close or unclear. The 30 MB embedding model over the 67 MB one: two points of recall for five times the time. No reranker: worse and slower. The classifier off by default: it more than doubles what a filter catches, but the filter is the fourth lock and the price is a gigabyte.</p>
 
-<h2 id="limits"><span class="n">7.6</span>What these numbers do not show</h2>
+<h2 id="limits"><span class="n">8.6</span>What these numbers do not show</h2>
 <ul>
 <li>Anything about real days. The sets are made up, small and in English. No question has been scored against a week of actual use. <span class="g u">Not tested</span></li>
 <li>Anything about the model pass. Its rules are tested with a pretend model. Whether a real model's statements about a person are right has not been looked at. <span class="g u">Not tested</span></li>
@@ -99,7 +99,7 @@
 <li>Hard, open: propose a way to measure whether an inferred statement such as "prefers short written updates" is true.</li>
 </ol></div>
 
-<nav class="pager" aria-label="Chapters"><a href="serving.html"><span class="dir">Previous</span>6. Serving: keys, rooms and a log</a><a class="next" href="what-is-built.html"><span class="dir">Next</span>8. What is built</a></nav>
+<nav class="pager" aria-label="Chapters"><a href="the-owners-page.html"><span class="dir">Previous</span>7. The owner&#x27;s page, and agents that start a command</a><a class="next" href="what-is-built.html"><span class="dir">Next</span>9. What is built</a></nav>
 </article></main></div>
 <footer><div>
 <p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>

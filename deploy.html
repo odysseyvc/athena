@@ -53,6 +53,10 @@
 </div></div>
 
 <div class="stage"><div class="num">3</div><div>
+<h2>Open your page</h2>
+<p>An icon with two circles appears near the clock. Click it, or run this, and your browser opens a page that only you can reach (<a href="the-owners-page.html">Chapter 7</a>):</p>
+<div class="cmd"><pre><code>athena.cmd open</code></pre></div>
+<p>The page shows the last hour as an agent would be given it, who has a key, anything waiting for your yes, what is held about you, and the log. Everything in the steps below can be done there; the commands are given because they are easier to copy.</p>
 <h2>Tell it what never to record</h2>
 <p>Password managers, banks, brokerages, sign-in pages and private browser windows are excluded from the start (<a href="privacy-held-by-code.html">Chapter 3</a>). Add your own:</p>
 <div class="cmd"><pre><code>athena.cmd exclude app signal*
@@ -74,6 +78,11 @@ athena.cmd ask search_activity "{\"query\": \"the bill that did not add up\"}"</
 
 <div class="stage"><div class="num">5</div><div>
 <h2>Give an agent a key</h2>
+<p>For a known agent, one command makes its key and prints exactly what to give it:</p>
+<div class="cmd"><pre><code>athena.cmd connect claude-code
+athena.cmd connect cursor
+athena.cmd connect claude-desktop</code></pre></div>
+<p>The kinds are <code>claude-code</code>, <code>claude-desktop</code>, <code>cursor</code>, <code>vscode</code>, <code>codex</code> (which the ChatGPT desktop app shares), <code>gemini</code>, <code>devin</code>, <code>stdio</code> for any agent that starts a command, and <code>other</code> for any agent that calls an address. For anything else, by hand:</p>
 <div class="cmd"><pre><code>athena.cmd grant myagent --scopes now,history,profile</code></pre></div>
 <p>The token is shown once; only its hash is kept. The agent sends it as <code>Authorization: Bearer ...</code> to the address above, as a Streamable HTTP server of the Model Context Protocol. The five scopes are <code>now</code> (the last three hours), <code>history</code>, <code>profile</code>, <code>writing</code> (what you typed) and <code>screen_text</code> (what was on your screen). Start without the last two.</p>
 <p>For a visitor you trust less:</p>
@@ -100,7 +109,7 @@ athena.cmd approve 3fa9c1</code></pre></div>
 <h2>Checking your own copy</h2>
 <div class="cmd"><pre><code>%USERPROFILE%\.athena\venv\Scripts\python -m pytest
 %USERPROFILE%\.athena\venv\Scripts\python -m evals.run</code></pre></div>
-<p>The first runs the 97 tests. The second scores search, the privacy rules and the attribution of typed text on a made-up fortnight and prints quality beside cost (<a href="measuring.html">Chapter 7</a>).</p>
+<p>The first runs the 109 tests. The second scores search, the privacy rules and the attribution of typed text on a made-up fortnight and prints quality beside cost (<a href="measuring.html">Chapter 8</a>).</p>
 </article></main>
 <footer><div>
 <p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
