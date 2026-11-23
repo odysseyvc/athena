@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>2. Capture: what a computer will tell you about its owner | A personal context service</title>
+<title>2. Capture: what a computer will tell you about its owner | Athena</title>
 <meta name="description" content="Six signals Windows gives without a screenshot or a keyboard hook, ordered by what each costs, how the text a person typed is told from the text that was already there, and when to fall back on reading a picture.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
@@ -12,7 +12,7 @@
 </head>
 <body>
 <header class="masthead"><div class="masthead-inner">
-<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Athena</a>
 <nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
 </div></header>
 <div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">2.1</span>The problem: learning from a screen without filming it</a></li><li><a href="#signals"><span class="n">2.2</span>Six signals, cheapest first</a></li><li><a href="#text"><span class="n">2.3</span>Reading a window&#x27;s text</a></li><li><a href="#typed"><span class="n">2.4</span>What the owner typed</a></li><li><a href="#ocr"><span class="n">2.5</span>When the window says nothing</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li class="here"><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
@@ -59,7 +59,7 @@ found = el.FindAllBuildCache(DESCENDANTS, cond, self._cache(P_NAME, P_TYPE))</co
 <p>Only lines not seen before in that window are stored. A page that is read every thirty seconds and has not changed writes nothing.</p>
 
 <h2 id="typed"><span class="n">2.4</span>What the owner typed</h2>
-<p>A keyboard hook would see every key, including passwords, and is how spyware works. The service does not use one. It reads the field that has the keyboard, every two seconds while the owner is typing, and compares readings.</p>
+<p>A keyboard hook would see every key, including passwords, and is how spyware works. Athena does not use one. It reads the field that has the keyboard, every two seconds while the owner is typing, and compares readings.</p>
 <p>A reply box often starts full of someone else's words. So the piece that counts as the owner's is only what was added between the first reading and the last:</p>
 <pre><code>def _inserted(before: str, after: str) -&gt; str:
     """What was put into a field between two readings: the part of `after`
@@ -75,7 +75,7 @@ found = el.FindAllBuildCache(DESCENDANTS, cond, self._cache(P_NAME, P_TYPE))</co
 <p>A piece ends when the owner leaves the field, clears it (a message sent), or stops for twenty seconds. A jump of more than 200 characters between two readings is a paste, and the piece is marked as pasted, which later means "probably somebody else's words" (<a href="whose-words.html">Chapter 4</a>). Pieces under fifteen characters or three words are dropped, which removes web addresses and "ok thanks". On twelve scripted cases, all twelve were attributed correctly. <span class="g v">Verified</span>; typing in real programs has been checked only through tests with a pretend Windows.</p>
 
 <h2 id="ocr"><span class="n">2.5</span>When the window says nothing</h2>
-<p>Some windows tell the accessibility interface almost nothing: a remote desktop, a drawing canvas, some packaged web apps. For those, and only when a reading gives under 200 characters, the service asks the window to draw itself into memory and hands the picture to the text recognition that ships with Windows. The picture is never written to disk.</p>
+<p>Some windows tell the accessibility interface almost nothing: a remote desktop, a drawing canvas, some packaged web apps. For those, and only when a reading gives under 200 characters, Athena asks the window to draw itself into memory and hands the picture to the text recognition that ships with Windows. The picture is never written to disk.</p>
 <p>On a one-megapixel window that took 1.4 seconds, 0.3 of it processor time, and returned 52 lines; two thirds of its longer words also appeared in that window's accessibility text. <span class="g v">Verified</span>, one window. How accurate it is on windows that have no accessibility text to compare with has not been measured.</p>
 
 <div class="box caution"><div class="label">What went wrong</div>

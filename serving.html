@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>6. Serving: keys, rooms and a log | A personal context service</title>
+<title>6. Serving: keys, rooms and a log | Athena</title>
 <meta name="description" content="How a local service lets agents read without letting them roam: a token per client, scopes as rooms, approval one request at a time, tools an agent can run unasked, and a record of everything that was given.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
@@ -12,7 +12,7 @@
 </head>
 <body>
 <header class="masthead"><div class="masthead-inner">
-<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Athena</a>
 <nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
 </div></header>
 <div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">6.1</span>The problem: one store, several readers, different trust</a></li><li><a href="#protocol"><span class="n">6.2</span>The protocol, bought</a></li><li><a href="#keys"><span class="n">6.3</span>Keys and rooms</a></li><li><a href="#door"><span class="n">6.4</span>The one door</a></li><li><a href="#tools"><span class="n">6.5</span>Tools an agent will run unasked</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li class="here"><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
@@ -37,7 +37,7 @@
 <h2 id="protocol"><span class="n">6.2</span>The protocol, bought</h2>
 <div class="box definition"><div class="label">Definition</div>
 <dl class="terms"><dt>Model Context Protocol (MCP)</dt><dd>An open protocol by which a program offers tools to an agent: a list of tools, each with a name, a description and the inputs it takes, and a way to call one. An agent that speaks it can use a server it has never seen.</dd></dl></div>
-<p>The service is such a server, over HTTP, bound to the address <code>127.0.0.1</code>: reachable from this machine and from nowhere else. That address is a constant in the source, not a setting. The protocol, the transport and the check of the bearer token are the official SDK's; what was written here is the list of tools and what stands behind them.</p>
+<p>Athena is such a server, over HTTP, bound to the address <code>127.0.0.1</code>: reachable from this machine and from nowhere else. That address is a constant in the source, not a setting. The protocol, the transport and the check of the bearer token are the official SDK's; what was written here is the list of tools and what stands behind them.</p>
 
 <h2 id="keys"><span class="n">6.3</span>Keys and rooms</h2>
 <div class="tablewrap"><table>
