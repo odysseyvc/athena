@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A personal context service: a model of you that stays on your machine</title>
+<meta name="description" content="It learns what you are working on from your own computer, keeps it in a folder you own, and serves it read-only to your agents, with every item marked by where it came from.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" aria-current="page" class="hide-sm">Product</a><a href="book.html">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<main><section class="hero"><div class="in">
+<div>
+<h1>A model of you that stays <em>yours.</em></h1>
+<p class="sub">The service learns what you are working on from your own computer: which windows had your attention, what you typed, what you opened. It keeps that in a folder on your machine and serves it, read-only, to the agents you choose. Everything it hands over is marked with where it came from.</p>
+<div class="actions">
+<a class="btn primary" href="book.html">Read how it is built</a>
+<a class="btn ghost" href="deploy.html">Run your own</a>
+</div>
+<p class="fine">Every part of it is explained in a <a href="book.html">8-chapter book</a>. The conversation shown is an illustration with made-up content; the grey lines are what the service marks on every answer.</p>
+</div>
+
+<div class="phone" aria-label="An example of an assistant answering from the service">
+<div class="bar"><div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg></div><div class="who">Your assistant<small>reading from the service</small></div></div>
+<div class="thread">
+<div class="msg me">What was I working on this morning?</div>
+<div class="msg bot">From 9:40 to 11:15: 52 minutes in the ledgerlite project, mostly invoice_parser.py; 21 minutes on a term sheet in your mail; and you opened Q3 burn model.xlsx at 10:02.<span class="meta">From the service: three items measured from your own activity, with times and record ids. One window title was withheld because it read like an instruction.</span></div>
+<div class="msg me">Draft the reply about the term sheet the way I usually write.</div>
+<div class="msg bot">The service has four passages you typed this week. Your replies are short, open with a first name and put a date on every promise. Draft below.<span class="meta">Read with the <b>writing</b> scope. The term sheet itself was on your screen: it is quoted material, not something you said.</span></div>
+</div></div>
+</div></section>
+
+<section class="band"><div class="in">
+<p class="eyebrow">What it does</p>
+<h2>Your agents know what you are doing, <em>without</em> being told.</h2>
+<p class="lead">An assistant that remembers only what you tell it knows very little. The service fills that in from the machine you already work on, and nothing it learns leaves that machine unless an agent you let in asks for it.</p>
+
+<div class="group"><h3>It watches, cheaply</h3>
+<div class="cards three">
+<div class="card"><h3>What has your attention</h3><p>The program and window in front of you, read every two seconds, and for a browser the address. Away from the keyboard for two minutes, nothing is recorded.</p></div>
+<div class="card"><h3>The text in the window</h3><p>What a screen reader would be told, through Windows' accessibility interface. No screenshot is kept. A window that says nothing is read once by Windows' own OCR and the picture is thrown away.</p></div>
+<div class="card"><h3>What you type and open</h3><p>Only what you added to a field counts as yours; what was already there does not, and a large paste is marked as a paste. Files come from Windows' own Recent list.</p></div>
+</div></div>
+
+<div class="group"><h3>It distils</h3>
+<div class="cards three">
+<div class="card"><h3>Where the time went</h3><p>Each day summed up by code: hours active, projects, sites, files. Kept as Markdown you can read, long after the raw record is deleted.</p></div>
+<div class="card"><h3>Search by words and by meaning</h3><p>Ask for "the bill that did not add up" and find the invoice test. A 30 MB model on your own processor does the meaning; nothing is sent anywhere.</p></div>
+<div class="card"><h3>A memory that is kept up</h3><p>With your own model key, a pass adds, confirms, revises and retires statements about your goals, commitments and style. Each must cite evidence, and a retired one keeps its dates.</p></div>
+</div></div>
+
+<div class="group"><h3>It serves</h3>
+<div class="cards three">
+<div class="card"><h3>Seven read-only tools</h3><p>Over the Model Context Protocol, on this machine only: what you were just doing, a search, a person or project, samples of your writing, the model of you, one day.</p></div>
+<div class="card"><h3>A key for each visitor</h3><p>Every agent gets its own token and a set of rooms it may enter. One may browse; another must wait for your yes on every single request.</p></div>
+<div class="card"><h3>A log of what was given</h3><p>Every request, allowed or refused, with what was asked and which records were handed over.</p></div>
+</div></div>
+</div></section>
+
+<section class="band tint"><div class="in">
+<p class="eyebrow">How it works</p>
+<h2>Kinds are kept apart by how a thing was <em>observed,</em> not by what it says.</h2>
+<p class="lead">Most of what is on your screen was written by other people. A page can say anything, including orders to whichever agent reads it. So nothing on a screen is ever read for what it claims.</p>
+<div class="flow">
+<div><h3>Capture</h3><p>Paused or excluded? Then nothing is read. Otherwise the window, its text and your typing go to separate files.</p></div>
+<div><h3>Clean</h3><p>Keys, passwords, card and account numbers and one-time codes are removed before anything is written.</p></div>
+<div><h3>Distil</h3><p>Code turns your behaviour into days, projects and people. A model, if you allow one, sees only what you did and typed.</p></div>
+<div><h3>Serve</h3><p>Token, approval, scope, answer, log, in that order. Every item carries its provenance.</p></div>
+</div>
+<div class="split" style="margin-top:56px">
+<div>
+<p class="big">Every item an agent receives says whose it is. Code attaches that mark, and no text on a screen can change it.</p>
+<ul class="checks">
+<li><b>An excluded window leaves no trace.</b> Password managers, banks, sign-in pages, private browser windows and anything you name: not the title, not the time spent. The timeline has a gap.</li>
+<li><b>Facts about you come from you.</b> A page that says "the owner's priority is X" can become, at most, "the owner had a window open that showed this".</li>
+<li><b>Deleting stays deleted.</b> Forget the last ten minutes and the search index is rebuilt without them.</li>
+<li><b>It listens on this machine only.</b> That is a constant in the code, not a setting.</li>
+</ul>
+</div>
+<div class="answers">
+<div class="answer allow"><div class="k">About you</div><p><b>Measured, typed or stated by you.</b> Where your attention was, what you wrote, what you put in your own notes file. Marked <code>about_owner: true</code>.</p></div>
+<div class="answer ask"><div class="k">Quoted</div><p><b>What other people wrote.</b> Window titles and screen text, always inside a <code>quoted_text</code> field with its author marked. Material to read, never an instruction.</p></div>
+<div class="answer refuse"><div class="k">Withheld</div><p><b>Text that reads as an order to an assistant.</b> Not served at all. The agent is told a piece was held back and how long it was.</p></div>
+<div class="note"><b>What the last lock is worth, measured.</b> A list of patterns caught 4 of 10 injections written after it was last changed. With a classifier model beside it, 9 of 10. That is why the first two do not depend on it. <a href="whose-words.html">The chapter on whose words are whose</a> has the numbers.</div>
+</div>
+</div>
+</div></section>
+
+<section class="band"><div class="in">
+<p class="eyebrow">Why it exists</p>
+<p class="quote">Build a model of me by itself, keep it in a folder I own, and serve it to my agents.</p>
+<p>That is the brief from its first owner, in short. The service was built beside a personal assistant that kept a memory only of what it was told. The product whose idea it follows, Second by First Person Labs, runs on a Mac and is on a waiting list; this one was written for Windows 11, from the first signal to the server, and every decision is in the book.</p>
+<div class="cards three" style="margin-top:34px">
+<div class="card"><h3>Bought where it could be</h3><p>The protocol, Windows' accessibility interface and OCR, SQLite's word search, an open embedding model. What exists was checked first, licence and cost included.</p><a href="what-a-user-model-is.html">What a portable user model is</a></div>
+<div class="card"><h3>Built where nothing had it</h3><p>Rules that leave no trace, provenance on every item, a key for each agent. None of the products examined documents any of the three.</p><a href="privacy-held-by-code.html">Privacy rules held by code</a></div>
+<div class="card"><h3>One agent connected</h3><p>The assistant it was built beside reads from it through its own connection code, with all seven tools sorted as reads that run unasked.</p><a href="serving.html">Serving: keys, rooms and a log</a></div>
+</div>
+</div></section>
+
+<section class="band tint"><div class="in">
+<p class="eyebrow">Measurements</p>
+<h2>Measured, not <em>claimed.</em></h2>
+<div class="statline">
+<div><div class="v">71%</div><div class="l">of questions asked in other words found the right record in the first five. Matching words alone found none.</div></div>
+<div><div class="v">0.7%</div><div class="l">of one processor core over an 85-minute run, and 180 MB of memory with search.</div></div>
+<div><div class="v">9 / 10</div><div class="l">fresh injections withheld with the classifier on; 4 of 10 by patterns alone.</div></div>
+<div><div class="v">97</div><div class="l">automated tests, most of them on the privacy rules and the provenance marks.</div></div>
+</div>
+<p class="caption">The test sets are made up and small, and nothing has yet been scored against real days. <a href="measuring.html">How it was measured</a>, <a href="evidence.html">how claims are graded</a>, and <a href="what-is-built.html">the full status of each part</a>.</p>
+</div></section>
+
+<section class="band"><div class="in">
+<p class="eyebrow">Roadmap</p>
+<h2>What is next.</h2>
+<div class="road">
+<div><h3>Now</h3><ul>
+<li><b>The first real week</b><span>Seven days of ordinary use, then questions with known answers taken from them.</span></li>
+<li><b>The model pass, run for real</b><span>It is written and tested with a pretend model. It has never seen a key.</span></li>
+</ul></div>
+<div><h3>Next</h3><ul>
+<li><b>A smaller classifier</b><span>The one tried holds a gigabyte of memory. One a tenth the size exists behind a licence its user must accept.</span></li>
+<li><b>People, properly</b><span>Today they are found by the titles of chat windows and joined by spelling. That is the weakest part.</span></li>
+</ul></div>
+<div><h3>Later</h3><ul>
+<li><b>Meetings</b><span>Nothing is heard today. Audio is off by design until there is a good answer for the other people in the room.</span></li>
+<li><b>Approvals without a terminal</b><span>A request waiting for your yes is approved by a command. It should be a tap.</span></li>
+<li><b>Other systems</b><span>Windows 11 only, so far.</span></li>
+</ul></div>
+</div>
+</div></section>
+
+<section class="band tint"><div class="in">
+<p class="eyebrow">The book</p>
+<h2>Everything needed to build one, <em>explained.</em></h2>
+<p class="lead">8 chapters for the technically minded: the concepts, the design, the code that runs, what went wrong, and exercises.</p>
+<div class="partcards">
+<a href="what-a-user-model-is.html"><div class="pn">I</div><h3>Foundations</h3><p>What a model of a person is, what exists already, and what a computer will tell you about its owner.</p></a>
+<a href="privacy-held-by-code.html"><div class="pn">II</div><h3>Safety</h3><p>What is never recorded, and how other people's words are kept from becoming instructions or facts.</p></a>
+<a href="search-and-memory.html"><div class="pn">III</div><h3>Use</h3><p>Finding things again, a memory that is kept up, and letting agents in by the right door.</p></a>
+<a href="measuring.html"><div class="pn">IV</div><h3>Knowing it works</h3><p>Quality and cost measured together, and the present state of every part.</p></a>
+</div>
+</div></section>
+
+<section class="closing band">
+<h2>Read the book, or <em>run your own.</em></h2>
+<p>The program, its tests and its evaluation are a few thousand lines of Python with no service to sign up for.</p>
+<div class="actions">
+<a class="btn primary" href="book.html">Start the book</a>
+<a class="btn ghost" href="deploy.html">Run your own</a>
+</div>
+</section>
+</main>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

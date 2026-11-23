@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2. Capture: what a computer will tell you about its owner | A personal context service</title>
+<meta name="description" content="Six signals Windows gives without a screenshot or a keyboard hook, ordered by what each costs, how the text a person typed is told from the text that was already there, and when to fall back on reading a picture.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">2.1</span>The problem: learning from a screen without filming it</a></li><li><a href="#signals"><span class="n">2.2</span>Six signals, cheapest first</a></li><li><a href="#text"><span class="n">2.3</span>Reading a window&#x27;s text</a></li><li><a href="#typed"><span class="n">2.4</span>What the owner typed</a></li><li><a href="#ocr"><span class="n">2.5</span>When the window says nothing</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li class="here"><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part I · Foundations</div>
+<div class="chno">Chapter 2</div>
+<h1>Capture: what a computer will tell you about its owner</h1>
+<p class="lede">Six signals Windows gives without a screenshot or a keyboard hook, ordered by what each costs, how the text a person typed is told from the text that was already there, and when to fall back on reading a picture.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>List the signals an operating system gives about what its user is doing, and order them by cost.</li>
+<li>Read the text of a window without taking a picture of it, and explain why one query beats walking the tree.</li>
+<li>Tell text a person typed from text that was already in the field, and from a paste.</li>
+<li>Say when reading a picture of a window is justified, and what it costs.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">2.1</span>The problem: learning from a screen without filming it</h2>
+<p>The obvious way to know what is on a screen is to photograph it every second and run text recognition on the pictures. It works, and it is expensive: pictures are large, recognition is slow, and a folder of screenshots is the most sensitive thing a person could keep. This chapter gets most of the same knowledge from signals the system already holds as text.</p>
+
+<h2 id="signals"><span class="n">2.2</span>Six signals, cheapest first</h2>
+<div class="tablewrap"><table>
+<caption><b>Table 2.1.</b> The signals, how each is read, and what a reading cost on one laptop. <span class="g v">Verified</span>, measured 23 November 2026.</caption>
+<thead><tr><th>Signal</th><th>How</th><th>When</th><th>Cost of one reading</th></tr></thead>
+<tbody>
+<tr><th>Program and window in front</th><td><code>GetForegroundWindow</code>, the title, the program's file name</td><td>every 2 s</td><td>0.1 ms</td></tr>
+<tr><th>Is the owner there</th><td><code>GetLastInputInfo</code>: time since the last key or mouse movement</td><td>every 2 s</td><td>included</td></tr>
+<tr><th>Browser address</th><td>the address bar, through the accessibility interface</td><td>when a browser's title changes</td><td>90 ms</td></tr>
+<tr><th>Text in the window</th><td>the accessibility interface: what a screen reader is told</td><td>once on settling, then at most every 30 s</td><td>0.1 to 1 s</td></tr>
+<tr><th>What is being typed</th><td>the field that has the keyboard</td><td>every 2 s while typing</td><td>11 ms</td></tr>
+<tr><th>Files opened</th><td>Windows' Recent list</td><td>every 60 s</td><td>13 ms</td></tr>
+</tbody></table></div>
+<p>A stretch during which one window keeps the keyboard is stored as one record, a <em>span</em>, with a start and an end. After two minutes with no key or mouse movement the span is closed at the moment of the last input, and nothing is recorded until the owner returns.</p>
+
+<h2 id="text"><span class="n">2.3</span>Reading a window's text</h2>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Accessibility interface</dt><dd>The service through which a screen reader learns what is in a window: a tree of elements (buttons, links, paragraphs), each with a type and a name. On Windows it is called UI Automation.</dd></dl></div>
+<p>The first version walked that tree, asking each element for its children. Each question crosses from one program to another. On a browser window of 490 elements that took 2.1 seconds. The interface also accepts one query, "every text-bearing element under this window, with its name, already filled in", and answers it in one crossing. The same kind of window, with 1,143 elements, then took 0.8 seconds. <span class="g v">Verified</span>, one window each.</p>
+<pre><code>cond = self._ui.CreateAndCondition(self._any(P_TYPE, TEXT_TYPES),
+                                   self._ui.CreatePropertyCondition(P_PASSWORD, False))
+found = el.FindAllBuildCache(DESCENDANTS, cond, self._cache(P_NAME, P_TYPE))</code></pre>
+<p>The condition does two jobs. It keeps only kinds of element that carry text, and it leaves password fields out of the query itself, so their contents are never asked for (<a href="privacy-held-by-code.html">Chapter 3</a>).</p>
+<p>Only lines not seen before in that window are stored. A page that is read every thirty seconds and has not changed writes nothing.</p>
+
+<h2 id="typed"><span class="n">2.4</span>What the owner typed</h2>
+<p>A keyboard hook would see every key, including passwords, and is how spyware works. The service does not use one. It reads the field that has the keyboard, every two seconds while the owner is typing, and compares readings.</p>
+<p>A reply box often starts full of someone else's words. So the piece that counts as the owner's is only what was added between the first reading and the last:</p>
+<pre><code>def _inserted(before: str, after: str) -&gt; str:
+    """What was put into a field between two readings: the part of `after`
+    between what the two share at each end."""
+    n = min(len(before), len(after))
+    a = 0
+    while a &lt; n and before[a] == after[a]:
+        a += 1
+    b = 0
+    while b &lt; n - a and before[-1 - b] == after[-1 - b]:
+        b += 1
+    return after[a:len(after) - b]</code></pre>
+<p>A piece ends when the owner leaves the field, clears it (a message sent), or stops for twenty seconds. A jump of more than 200 characters between two readings is a paste, and the piece is marked as pasted, which later means "probably somebody else's words" (<a href="whose-words.html">Chapter 4</a>). Pieces under fifteen characters or three words are dropped, which removes web addresses and "ok thanks". On twelve scripted cases, all twelve were attributed correctly. <span class="g v">Verified</span>; typing in real programs has been checked only through tests with a pretend Windows.</p>
+
+<h2 id="ocr"><span class="n">2.5</span>When the window says nothing</h2>
+<p>Some windows tell the accessibility interface almost nothing: a remote desktop, a drawing canvas, some packaged web apps. For those, and only when a reading gives under 200 characters, the service asks the window to draw itself into memory and hands the picture to the text recognition that ships with Windows. The picture is never written to disk.</p>
+<p>On a one-megapixel window that took 1.4 seconds, 0.3 of it processor time, and returned 52 lines; two thirds of its longer words also appeared in that window's accessibility text. <span class="g v">Verified</span>, one window. How accurate it is on windows that have no accessibility text to compare with has not been measured.</p>
+
+<div class="box caution"><div class="label">What went wrong</div>
+<p>Private browser windows were to be recognised by their title. Edge writes "[InPrivate]" in it and Firefox writes "Private Browsing". Chrome writes nothing: an Incognito window's title is the page's title. This was found by opening one. Chrome does put a button named for the mode in its toolbar, so for browsers the buttons are read as well. A Chrome Incognito window on a made-up page, held in front for eight seconds, then left no trace. <span class="g v">Verified</span></p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>Six signals, all already text, cost between a tenth of a millisecond and a second each. No picture is kept.</li>
+<li>Ask the accessibility interface one question, not one per element.</li>
+<li>What the owner typed is what they added to a field; what was there before is not theirs, and a large jump is a paste.</li>
+<li>Reading a picture is a fallback for windows that say nothing, and costs about ten times a normal reading.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>The window is read every two seconds. What is lost by reading it every ten? What is gained?</li>
+<li><code>_inserted</code> returns one stretch of text. Construct a sequence of readings in which the owner edits two separate places, and say what is returned. Is that acceptable?</li>
+<li>Typing in a terminal is not captured as typed text. Propose a way to capture it that does not use a keyboard hook, and name its weakness.</li>
+<li>Extend the code: record which monitor the window was on. Which of the six signals would you add it to, and what would it cost?</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a href="what-a-user-model-is.html"><span class="dir">Previous</span>1. What a portable user model is</a><a class="next" href="privacy-held-by-code.html"><span class="dir">Next</span>3. Privacy rules held by code</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

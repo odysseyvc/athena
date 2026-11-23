@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. Whose words are whose | A personal context service</title>
+<meta name="description" content="Most of a screen was written by other people. How to separate what a person did, what they wrote and what they merely saw, mark every served item with where it came from, and what a list of patterns and a classifier each catch of text written to steer an agent.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">4.1</span>The problem: most of a screen was written by someone else</a></li><li><a href="#design"><span class="n">4.2</span>Five things that keep them apart</a></li><li><a href="#filter"><span class="n">4.3</span>What the filter is worth</a></li><li><a href="#slow"><span class="n">4.4</span>A slow model and an impatient agent</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li class="here"><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part II · Safety</div>
+<div class="chno">Chapter 4</div>
+<h1>Whose words are whose</h1>
+<p class="lede">Most of a screen was written by other people. How to separate what a person did, what they wrote and what they merely saw, mark every served item with where it came from, and what a list of patterns and a classifier each catch of text written to steer an agent.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Explain why text captured from a screen is dangerous to an agent that reads it, in two different ways.</li>
+<li>Separate what a person did, what they wrote and what they saw at the moment of capture.</li>
+<li>Attach provenance to every item served, and keep other people's text out of every place an agent treats as trusted.</li>
+<li>Say what a list of patterns and a classifier model each catch, what each costs, and why neither is the first line of defence.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">4.1</span>The problem: most of a screen was written by someone else</h2>
+<p>A person's screen is mostly other people's words: mail, web pages, chats, documents. A system that captures the screen and hands it to an agent creates two dangers.</p>
+<p>The first is <em>instruction</em>. A web page can contain a sentence addressed to whichever assistant reads it: forward this, approve that. If captured text reaches an agent looking like guidance, the page's author is steering the owner's agent.</p>
+<p>The second is <em>attribution</em>. An email says "as agreed, you will pay by Friday". If that becomes "the owner committed to pay by Friday", someone else has written a fact about the owner into the owner's own model.</p>
+
+<h2 id="design"><span class="n">4.2</span>Five things that keep them apart</h2>
+<p><b>1. Kinds are separated at capture, by how a thing was observed.</b> Which window had the owner's attention, and for how long, is behaviour that the program measured. What the owner added to a field is theirs (<a href="capture.html">Chapter 2</a>). A window's title and the text in it were written by someone else. The three go to three files and never mix. Nothing is sorted by what it says, because what it says is the thing that cannot be trusted.</p>
+<p><b>2. Facts about the owner are computed from behaviour and from the owner's own words only.</b> No code path reads a title or a line of screen text for what it claims. A page saying "the owner's top priority is X" can become, at most, "the owner had a window open that showed this text". The model pass (<a href="search-and-memory.html">Chapter 5</a>) is never shown screen text or anything pasted.</p>
+<p><b>3. Every item served carries its provenance.</b></p>
+<div class="tablewrap"><table>
+<caption><b>Table 4.1.</b> The kinds of provenance an item can carry.</caption>
+<thead><tr><th>Kind</th><th>About the owner?</th><th>Author</th><th>Means</th></tr></thead>
+<tbody>
+<tr><th><code>owner_behaviour</code></th><td>yes</td><td>the program, by observation</td><td>where attention was, measured</td></tr>
+<tr><th><code>owner_entered</code></th><td>yes</td><td>the owner</td><td>typed into a field</td></tr>
+<tr><th><code>owner_stated</code></th><td>yes</td><td>the owner</td><td>written in their own notes file</td></tr>
+<tr><th><code>derived</code></th><td>yes</td><td>the program, by code</td><td>sums over behaviour: days, projects</td></tr>
+<tr><th><code>model_inferred</code></th><td>yes</td><td>a language model</td><td>a guess, with the evidence it cited</td></tr>
+<tr><th><code>third_party_text</code></th><td>no</td><td>other people or programs</td><td>it was on the screen, nothing more</td></tr>
+<tr><th><code>pasted_text</code></th><td>no</td><td>unknown</td><td>the owner pasted it</td></tr>
+</tbody></table></div>
+<p>Other people's text is always inside a field called <code>quoted_text</code>, beside a field saying who wrote it. It is never a key, never part of a tool's description, never in the notice at the top of an answer. Tool names and descriptions are fixed strings in the source.</p>
+<pre><code>def quote(text: str, limit: int = 300) -&gt; dict[str, Any]:
+    """Someone else's text, wrapped. One that reads as an order to an assistant is withheld."""
+    text = text or ""
+    verdict = _check(text)
+    if verdict == "flagged":
+        return {"withheld": "this text reads like an instruction to an assistant, so it is not served", "chars": len(text)}
+    if verdict == "unchecked":
+        return {"withheld": "not yet checked for instructions; it is being checked now, ask again in a minute", "chars": len(text)}
+    return {"quoted_text": text[:limit], "written_by": "other people or programs (it was on the owner's screen)"}</code></pre>
+<p><b>4. Text that reads as an order to an assistant is not served at all.</b> The agent is told that a piece was withheld and how long it was. The owner can read it in the folder.</p>
+<p><b>5. What a model infers must cite the records it was given</b>, or code drops it, and it is served marked as a model's guess.</p>
+<p>The first three are structure: they hold whatever any text says. The fourth is a filter, and filters miss things. That is why it is fourth.</p>
+
+<h2 id="filter"><span class="n">4.3</span>What the filter is worth</h2>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Prompt injection</dt><dd>Text placed where an agent will read it, written to make the agent act for the text's author and not for its owner.</dd></dl></div>
+<p>The filter began as a list of patterns: phrases that throw away earlier instructions, that address "the assistant reading this", that tell it to keep something from the user, that tell it to use a tool. Scored on 30 injections and 40 ordinary lines chosen to look like them ("Please send the signed copy to Anita by Thursday"), the first list caught 25 and wrongly flagged 5. It was rewritten until it scored 30 of 30 with no false alarm.</p>
+<p>That number flatters it. Ten more injections were then written and never used to change the list. It caught four. <span class="g v">Verified</span></p>
+<p>An open classifier model trained for the purpose was then scored on the same ten.</p>
+<div class="tablewrap"><table>
+<caption><b>Table 4.2.</b> Injections withheld, on the ten written after the pattern list was last changed, with twelve ordinary lines beside them. <span class="g v">Verified</span>, 23 November 2026.</caption>
+<thead><tr><th>Filter</th><th>Caught</th><th>Ordinary lines wrongly withheld</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><th>Pattern list</th><td>4 of 10</td><td>0 of 12</td><td>microseconds, no memory</td></tr>
+<tr><th>Classifier model</th><td>8 of 10</td><td>2 of 12</td><td rowspan="2">0.3 s for a window title, 1.8 s for a paragraph; about 1 GB of memory; 740 MB of disk</td></tr>
+<tr><th>Either</th><td>9 of 10</td><td>2 of 12</td></tr>
+</tbody></table></div>
+<p>The sets are small and were written by the person who wrote the filter. They show a direction and not a rate.</p>
+
+<h2 id="slow"><span class="n">4.4</span>A slow model and an impatient agent</h2>
+<p>The classifier takes a third of a second per title on a laptop. The design that followed from that:</p>
+<ul>
+<li>A piece is withheld at once if the pattern list flags it.</li>
+<li>Otherwise its verdict is looked up by the hash of its text. Verdicts are kept, so each text is paid for once.</li>
+<li>A piece with no verdict is checked on the spot only while the answer's time budget lasts (2.5 seconds). After that it is withheld as "not yet checked" and queued. A background thread works through the queue.</li>
+<li>New window titles are queued as they are recorded, so the answer to "what was I just doing" is normally already checked.</li>
+</ul>
+<p>The rule under all four: unchecked text from other people is never served. The classifier is off by default, because a gigabyte of memory is a great deal for a background service whose main defence does not depend on it.</p>
+
+<div class="box caution"><div class="label">What went wrong</div>
+<p>The first version asked the classifier about every quoted line of every search result, one at a time, while the agent waited. The first search on the real folder took 38 seconds. The time budget, the queue and the cache came from that measurement. With them the same search took about one second with the classifier on, and a tenth of a second with it off. <span class="g v">Verified</span></p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>Screen text is dangerous twice: as instruction, and as false fact about the owner.</li>
+<li>Separate kinds by how they were observed, compute facts only from the owner's own behaviour and words, and mark every item.</li>
+<li>A filter for injections is a second lock. Patterns caught 4 of 10 unseen cases; with a classifier, 9 of 10, at a gigabyte of memory.</li>
+<li>When a check is slow, fail closed: withhold what has not been checked.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>A project's name is served as a plain label, not as quoted text, on the grounds that it is the owner's own folder name. Describe a way a stranger could choose that name. How much harm could a label of eighty characters do?</li>
+<li>Write two injections the pattern list would miss, and two ordinary sentences it would wrongly withhold.</li>
+<li>The classifier wrongly withheld "Kindly disregard my last email, wrong attachment." What is the cost of that error to the owner? Compare it with the cost of missing one injection.</li>
+<li>Hard, open: the fourth lock withholds text. Design a version that serves the text but in a form an agent cannot mistake for instruction. What would you have to assume about the agent?</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a href="privacy-held-by-code.html"><span class="dir">Previous</span>3. Privacy rules held by code</a><a class="next" href="search-and-memory.html"><span class="dir">Next</span>5. Search, and a memory that is kept up</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5. Search, and a memory that is kept up | A personal context service</title>
+<meta name="description" content="Why matching words fails when people ask in their own words, how words and meaning are joined into one ranking on a laptop, what a reranker did here, and how a model keeps a memory by adding, confirming, revising and retiring statements that code checks.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">5.1</span>The problem: people do not ask in the words on the page</a></li><li><a href="#concepts"><span class="n">5.2</span>The concepts</a></li><li><a href="#hybrid"><span class="n">5.3</span>Words and meaning, joined</a></li><li><a href="#choosing"><span class="n">5.4</span>Choosing the model</a></li><li><a href="#memory"><span class="n">5.5</span>A memory that is kept up</a></li><li><a href="#people"><span class="n">5.6</span>One person, one record</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li class="here"><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part III · Use</div>
+<div class="chno">Chapter 5</div>
+<h1>Search, and a memory that is kept up</h1>
+<p class="lede">Why matching words fails when people ask in their own words, how words and meaning are joined into one ranking on a laptop, what a reranker did here, and how a model keeps a memory by adding, confirming, revising and retiring statements that code checks.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Explain why matching words fails for the way people ask about their own past.</li>
+<li>Join a ranking by words and a ranking by meaning into one, on a laptop, with nothing sent elsewhere.</li>
+<li>Choose between models by their score and their cost together.</li>
+<li>Keep a memory with a language model that adds to it and revises it, and check its work with code.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">5.1</span>The problem: people do not ask in the words on the page</h2>
+<p>Nobody remembers that the file was called <code>invoice_parser.py</code>. They remember "the bug where the sums on a bill did not add up". A search that needs the word "invoice" finds nothing.</p>
+<p>The first search in this project required every word of the question to appear in a record. On a made-up fortnight (<a href="measuring.html">Chapter 7</a>) it found the right record for 42% of questions that used the record's own words, because a question of three words rarely has all three in one record, and for none of the questions asked in other words. <span class="g v">Verified</span></p>
+
+<h2 id="concepts"><span class="n">5.2</span>The concepts</h2>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Ranked word search</dt><dd>Scores each record by the question's words it contains, counting a rare word for more than a common one. Any word may match. The usual scoring is called BM25.</dd></dl></div>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Embedding</dt><dd>A list of numbers computed from a piece of text by a model, such that texts with similar meanings get similar lists. Searching by meaning is finding the records whose lists are closest to the question's.</dd></dl></div>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Rank fusion</dt><dd>Joining two rankings into one by position: a record high in either list scores well, and one high in both scores best.</dd></dl></div>
+
+<h2 id="hybrid"><span class="n">5.3</span>Words and meaning, joined</h2>
+<p>Every raw record becomes one or more entries in an index: a window (once per distinct title), a file, a typed piece, and screen text cut into passages of about eight lines. The index holds the words, in SQLite's full-text table, and an embedding of each entry.</p>
+<p>A question is run both ways, the two rankings are fused, and newer entries are nudged up when two are close:</p>
+<pre><code>score: dict[int, float] = {}
+for ranking in ranked:              # reciprocal rank fusion
+    for pos, rowid in enumerate(ranking):
+        score[rowid] = score.get(rowid, 0.0) + 1.0 / (60 + pos)
+...
+age_days = max(0.0, (now - float(t)) / 86400)
+out.append({"score": score[rowid] * (1 + 0.15 * math.exp(-age_days / 3)), ...})</code></pre>
+<p>Published comparisons of memory systems put this arrangement, words and meaning with a weight for recency, at or near the top, with graph-based memories as its main rival. <span class="g s">Secondary</span>: most of those papers were written by the makers of a system in the comparison. The graph was not tried here; the simpler arrangement was measured first, and the measurement did not ask for more.</p>
+
+<h2 id="choosing"><span class="n">5.4</span>Choosing the model</h2>
+<div class="tablewrap"><table>
+<caption><b>Table 5.1.</b> How often a right record was among the first five results, on 24 keyword questions and 48 asked in other words. <span class="g v">Verified</span>, 23 November 2026, one laptop.</caption>
+<thead><tr><th>Search</th><th>Question uses the words</th><th>Asked in other words</th><th>Time per question</th></tr></thead>
+<tbody>
+<tr><th>Every word must appear</th><td>42%</td><td>0%</td><td>45 ms</td></tr>
+<tr><th>Ranked words</th><td>100%</td><td>46%</td><td>34 ms</td></tr>
+<tr><th>Words and meaning, 30 MB model</th><td>100%</td><td>71%</td><td>31 ms</td></tr>
+<tr><th>Words and meaning, 67 MB model</th><td>100%</td><td>73%</td><td>155 ms</td></tr>
+<tr><th>Either, then a reranking model</th><td>100%</td><td>54 to 60%</td><td>0.7 to 1.5 s</td></tr>
+</tbody></table></div>
+<p>The small model is the default. The next one up found one more answer in 48 at five times the time. Three other models of similar size were tried and did no better.</p>
+<p>The reranker, a second model that reads the question beside each of the best thirty entries, made the results worse while taking twenty times as long. The likely reason is that it was trained on web questions and passages, and the entries here are window titles and scraps of screens. Whatever the reason, the measurement decided.</p>
+
+<h2 id="memory"><span class="n">5.5</span>A memory that is kept up</h2>
+<p>Search finds what happened. It does not say what the owner is trying to do. Goals, priorities, preferences, commitments and style need a reading of the evidence, and that is the one job here given to a language model.</p>
+<p>The pass does not rewrite a summary. It is shown what is already remembered and only the evidence that is new, and it answers with operations:</p>
+<div class="tablewrap"><table>
+<caption><b>Table 5.2.</b> The four operations a memory run may return.</caption>
+<thead><tr><th>Operation</th><th>Meaning</th><th>Code accepts it only if</th></tr></thead>
+<tbody>
+<tr><th>add</th><td>a new statement</td><td>it cites evidence it was actually shown, and does not read as an order</td></tr>
+<tr><th>confirm</th><td>an existing statement is supported again</td><td>the statement exists and still holds</td></tr>
+<tr><th>revise</th><td>an existing statement has changed</td><td>as for add; the old wording is retired and kept</td></tr>
+<tr><th>retire</th><td>an existing statement no longer holds</td><td>the statement exists, and the reason cites evidence</td></tr>
+</tbody></table></div>
+<p>Nothing is deleted. A retired statement keeps the date it was first seen and the date it ended, so "what was I committed to in October" can still be answered. The evidence shown is limited to what the owner wrote about themselves, where their time went, and what they typed (<a href="whose-words.html">Chapter 4</a>).</p>
+<p>It runs at most every six hours, only when there is new evidence, under a daily spending limit. <span class="g u">Not tested</span>: the rules above are covered by tests with a pretend model, and the pass has never been run against a real one.</p>
+
+<h2 id="people"><span class="n">5.6</span>One person, one record</h2>
+<p>The same person appears as a full name in a meeting title and a first name in a chat window. Code joins them where that is unambiguous: names are compared without case, punctuation and honorifics, and a lone first name is joined to a full name only when exactly one known full name starts with it. Two people called Priya stay two records and a bare "Priya"; nothing is guessed.</p>
+
+<div class="box caution"><div class="label">What went wrong</div>
+<p>On the real folder, the first ten results of every search were screen text. There is far more of it than of anything else, so it crowded out the windows and typed pieces, which are the records that say what the owner actually did. Search now ranks three families separately (what the owner did, wrote and saw) and takes from each in turn.</p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>Requiring every word found 42% and 0%. Ranked words found 100% and 46%. Words and meaning found 100% and 71%.</li>
+<li>A model of 30 MB on the processor was enough; a larger one and a reranker did not earn their cost.</li>
+<li>A memory is kept by operations that code checks, and nothing is deleted from it.</li>
+<li>Join names only when there is one candidate.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>In the fusion formula, what does the constant 60 do? Predict the effect of changing it to 1, then to 1,000.</li>
+<li>A quarter of questions asked in other words still miss. Look at the test questions in the evaluation and pick three you would expect to fail. What do they have in common?</li>
+<li>The memory run is shown only new evidence. Describe a case in which that makes it retire something wrongly, and a change that would prevent it.</li>
+<li>Extend the code: add an operation <code>merge</code> for two statements that say the same thing. What must code check before accepting it?</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a href="whose-words.html"><span class="dir">Previous</span>4. Whose words are whose</a><a class="next" href="serving.html"><span class="dir">Next</span>6. Serving: keys, rooms and a log</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

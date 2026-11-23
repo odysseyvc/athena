@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. What a portable user model is | A personal context service</title>
+<meta name="description" content="Why an agent that only remembers what it is told knows little about you, what a user model adds, what the products that exist do and do not offer, and how to decide which parts to buy and which to build.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">1.1</span>The problem: an assistant that knows only what it is told</a></li><li><a href="#concepts"><span class="n">1.2</span>The concepts</a></li><li><a href="#exists"><span class="n">1.3</span>What exists</a></li><li><a href="#bought"><span class="n">1.4</span>What was bought, and what was built</a></li></ol><div class="book"><h2>The book</h2><ol><li class="here"><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part I · Foundations</div>
+<div class="chno">Chapter 1</div>
+<h1>What a portable user model is</h1>
+<p class="lede">Why an agent that only remembers what it is told knows little about you, what a user model adds, what the products that exist do and do not offer, and how to decide which parts to buy and which to build.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Say what a user model holds that an assistant's own memory does not.</li>
+<li>Name the four jobs such a system has, and what each must guarantee.</li>
+<li>Read a product's licence and stated costs before building on it, and tell a maker's claim from a measurement.</li>
+<li>Decide, part by part, what to buy and what to build.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">1.1</span>The problem: an assistant that knows only what it is told</h2>
+<p>A personal assistant with a memory remembers what its owner says to it. That is a small part of a working day. It does not know which document was open ten minutes ago, which project took the morning, or how its owner phrases a refusal, unless somebody types that in. So every request starts with the owner explaining their own situation.</p>
+<p>The alternative is to learn it where it happens. Nearly everything a knowledge worker does passes through one computer, and the computer can say which window had the keyboard, what text was in it, and what was typed.</p>
+
+<h2 id="concepts"><span class="n">1.2</span>The concepts</h2>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>User model</dt><dd>A kept description of one person, built from what they do: what they were just working on, their projects and the people they deal with, how they write, and over time their goals, priorities, preferences and commitments.</dd></dl></div>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Portable</dt><dd>Held in files the person owns and can read, edit, back up and move, and offered to any agent through an open protocol, so that it belongs to no single assistant.</dd></dl></div>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Provenance</dt><dd>A mark on a piece of information saying how it is known: who wrote it, how it was observed, and when.</dd></dl></div>
+
+<p>Such a system has four jobs. The rest of the book takes them in turn.</p>
+<div class="tablewrap"><table>
+<caption><b>Table 1.1.</b> The four jobs and what each must guarantee.</caption>
+<thead><tr><th>Job</th><th>What it does</th><th>What it must guarantee</th><th>Chapter</th></tr></thead>
+<tbody>
+<tr><th>Capture</th><td>Reads signals from the machine in the background.</td><td>Cheap enough to forget about; some things are never recorded.</td><td><a href="capture.html">Chapter 2</a>, <a href="privacy-held-by-code.html">Chapter 3</a></td></tr>
+<tr><th>Distil</th><td>Turns raw records into a kept model.</td><td>Facts about the owner come from the owner.</td><td><a href="whose-words.html">Chapter 4</a>, <a href="search-and-memory.html">Chapter 5</a></td></tr>
+<tr><th>Store</th><td>Keeps both in files.</td><td>On the owner's machine, readable, deletable.</td><td><a href="privacy-held-by-code.html">Chapter 3</a></td></tr>
+<tr><th>Serve</th><td>Answers agents' questions.</td><td>Each agent gets only what it was given leave to read, and every answer is logged.</td><td><a href="serving.html">Chapter 6</a></td></tr>
+</tbody></table></div>
+
+<h2 id="exists"><span class="n">1.3</span>What exists</h2>
+<p>The rule followed here is to buy a part unless building it is verifiably better. So the first step was to read what could be used. All of this was read on 23 November 2026.</p>
+<div class="tablewrap"><table>
+<caption><b>Table 1.2.</b> What was examined before anything was designed.</caption>
+<thead><tr><th>Product</th><th>What it offers</th><th>Why it was not the base</th></tr></thead>
+<tbody>
+<tr><th>Second, by First Person Labs</th><td>The idea this project copies: a model of the user learnt from raw computer activity, kept in a folder on the device, served over local and cloud interfaces with access controls. <span class="g c">Maker's claim</span></td><td>Its privacy notice and terms describe a macOS application, and its site offers a waiting list. <span class="g v">Verified</span> It publishes no documentation of its interfaces and says nothing about telling the user's words from other people's.</td></tr>
+<tr><th>screenpipe</th><td>Records the screen and audio on Windows, macOS and Linux; searchable; an MCP server.</td><td>Its licence allows personal, non-commercial use free and requires a paid plan for commercial use. <span class="g v">Verified</span> It states 5 to 20% of a processor, 0.5 to 3 GB of memory and about 30 GB of disk a month. <span class="g c">Maker's claim</span> Its MCP server has one shared key, and its pages describe no kept model of the user and no marking of where returned text came from.</td></tr>
+<tr><th>ActivityWatch</th><td>Free and open: the active program, window title and browser tab.</td><td>That is the cheapest tenth of the job, about a hundred lines against the Windows interface, and it would add a second service to run. <span class="g s">Secondary</span></td></tr>
+<tr><th>Windows Recall</th><td>Snapshots of the screen, searchable by the user.</td><td>Its store is not readable by other programs, and it needs a particular class of hardware. <span class="g s">Secondary</span></td></tr>
+</tbody></table></div>
+<p>None of the four documents the two things this project cares most about: rules about what is never recorded that hold whatever a model does, and a mark on everything served saying whose words it is.</p>
+
+<h2 id="bought"><span class="n">1.4</span>What was bought, and what was built</h2>
+<div class="tablewrap"><table>
+<caption><b>Table 1.3.</b> Each part, and where it came from.</caption>
+<thead><tr><th>Part</th><th>Bought or built</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><th>Which window, idle time</th><td>Bought: Windows' own calls</td><td>They are there and cost a tenth of a millisecond.</td></tr>
+<tr><th>Text in a window</th><td>Bought: Windows' accessibility interface, and its OCR as a fallback</td><td>No screenshot to keep, no recognition model to run.</td></tr>
+<tr><th>Protocol, transport, token check</th><td>Bought: the official SDK of the Model Context Protocol</td><td>An agent that speaks the protocol can connect with no code written for it.</td></tr>
+<tr><th>Search by words</th><td>Bought: SQLite's full-text index</td><td>It is in Python's standard library.</td></tr>
+<tr><th>Search by meaning</th><td>Bought: an open embedding model run on the processor</td><td>Chosen by measurement (<a href="search-and-memory.html">Chapter 5</a>).</td></tr>
+<tr><th>Privacy rules</th><td>Built</td><td>Nothing examined holds them in code that can be tested.</td></tr>
+<tr><th>Provenance and withholding</th><td>Built</td><td>Nothing examined has them.</td></tr>
+<tr><th>Keys, scopes, approval, log</th><td>Built</td><td>The products examined have one key for every reader.</td></tr>
+</tbody></table></div>
+
+<div class="box caution"><div class="label">What went wrong</div>
+<p>The first search for screenpipe's licence turned up three different answers on three directory sites, one of them "MIT". The licence file in its own repository settled it: older versions were MIT, the current code is not. A directory page describes a product as it once was. Read the file.</p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>A user model is learnt from what a person does, not from what they tell an assistant.</li>
+<li>It has four jobs: capture, distil, store, serve. Each has one guarantee that matters more than its features.</li>
+<li>What exists was read first. The parts with a good off-the-shelf answer were bought; the three with none were built.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>Pick one product in the second table and find the page that states its licence. What use would you need a paid plan for?</li>
+<li>The table of jobs gives one guarantee per job. Propose a fifth job and its guarantee. What would break if it were missing?</li>
+<li>A maker states that its recorder uses "5 to 20%" of a processor. Design the measurement you would make before believing or dismissing that figure for your own machine.</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a class="next" href="capture.html"><span class="dir">Next</span>2. Capture: what a computer will tell you about its owner</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

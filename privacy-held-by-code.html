@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3. Privacy rules held by code | A personal context service</title>
+<meta name="description" content="Why a rule that matters cannot be a request to a model, the order of checks that lets an excluded window leave no trace, how secrets are removed before anything is written, and how deleting stays deleted when there is a search index.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">3.1</span>The problem: a recorder sees everything</a></li><li><a href="#order"><span class="n">3.2</span>The order of checks</a></li><li><a href="#secrets"><span class="n">3.3</span>Secrets, removed by shape</a></li><li><a href="#deleting"><span class="n">3.4</span>Deleting, and staying deleted</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li class="here"><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part II · Safety</div>
+<div class="chno">Chapter 3</div>
+<h1>Privacy rules held by code</h1>
+<p class="lede">Why a rule that matters cannot be a request to a model, the order of checks that lets an excluded window leave no trace, how secrets are removed before anything is written, and how deleting stays deleted when there is a search index.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Explain why a privacy rule must be code that runs before anything is written, and not an instruction to a model.</li>
+<li>Order the checks in a recorder so that an excluded window leaves no trace at all.</li>
+<li>Remove secrets from text by their shape, and say what such removal misses.</li>
+<li>Make a deletion hold when there is a search index and a retention window.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">3.1</span>The problem: a recorder sees everything</h2>
+<p>A program that reads the window in front of its owner will, sooner or later, be looking at a password manager, a bank statement, a private browser window and a one-time code. What happens next cannot depend on judgement. A language model asked to "ignore anything sensitive" will usually do so, which is not the same as always.</p>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Held by code</dt><dd>A rule is held by code when one function decides it, the function runs before the thing it guards against can happen, and a test fails if the function is removed.</dd></dl></div>
+
+<h2 id="order"><span class="n">3.2</span>The order of checks</h2>
+<p>The recorder is one loop. What matters is the order of its steps, because a check that runs after the title has been written is too late.</p>
+<ol>
+<li><b>Paused?</b> Then nothing is read and nothing is written. A pause file that cannot be parsed counts as paused.</li>
+<li><b>Which window?</b> Program and title; for a browser, the address and whether the browser's own badge says the window is private.</li>
+<li><b>Excluded?</b> Then the open span is closed and the pass ends. Nothing about the window is written: not its name, not its title, not that time was spent there. The timeline has a gap.</li>
+<li><b>Only then</b> the title with secrets removed, the text, and the field being typed in.</li>
+</ol>
+<pre><code>def excluded(self, app: str = "", title: str = "", url: str = "") -&gt; str | None:
+    """Why this window must leave no trace, or None."""
+    a = (app or "").lower().removesuffix(".exe")
+    if a and any(fnmatch.fnmatch(a, g) for g in self.apps):
+        return "app"
+    if title and any(r.search(title) for r in self.titles):
+        return "title"
+    host = host_of(url)
+    if host and any(fnmatch.fnmatch(host, g) for g in self.hosts):
+        return "site"
+    return None</code></pre>
+<p>Three lists feed it: programs, title patterns and site patterns. They are data. The built-in lists cover password managers, Windows' credential prompts, private browser windows, banks, brokerages, payment sites and the sign-in pages of identity providers. What the owner adds is joined to the built-in lists, so a mistyped settings file cannot switch off the exclusion of password managers.</p>
+<p>Two smaller rules follow from the same idea. A browser whose address cannot be read is treated as unknown: its title is recorded and its text is not, because the address is how a bank is recognised. And if the window changes while its text is being read, what was read is thrown away, because it may belong to something not yet checked.</p>
+
+<h2 id="secrets"><span class="n">3.3</span>Secrets, removed by shape</h2>
+<p>Excluding a window is not enough. A key can be on screen in a terminal, a card number in an email. So every piece of text passes through one function before it is written, and what looks like a secret is replaced by a mark saying what kind it was.</p>
+<div class="tablewrap"><table>
+<caption><b>Table 3.1.</b> What is removed, and how it is recognised.</caption>
+<thead><tr><th>Kind</th><th>Recognised by</th></tr></thead>
+<tbody>
+<tr><th>Keys and tokens</th><td>the prefixes vendors use, signed tokens in three dotted parts, anything after "Bearer"</td></tr>
+<tr><th>Passwords and secrets in settings</th><td>a name such as password, secret, token or api key, then a colon or equals sign, then a value</td></tr>
+<tr><th>Card numbers</th><td>13 to 19 digits that pass the check-digit test cards use</td></tr>
+<tr><th>Bank accounts</th><td>the international format with its own check, or digits following a word such as account or routing</td></tr>
+<tr><th>One-time codes</th><td>3 to 8 digits shortly after a word such as code, OTP or PIN</td></tr>
+<tr><th>Identity numbers</th><td>the formats of several countries' numbers</td></tr>
+<tr><th>Any long number</th><td>11 to 19 bare digits</td></tr>
+<tr><th>Random-looking strings</th><td>32 or more characters with high entropy</td></tr>
+</tbody></table></div>
+<p>It errs towards removing. Nothing can tell an account number from an order number, and losing an order number costs nothing. On 26 made-up secrets all 26 were removed, with no change to 20 ordinary lines that contain numbers. <span class="g v">Verified</span> on that set; a secret with no recognisable shape, such as a password typed into a chat, is not caught.</p>
+<p>Web addresses lose their query string, fragment and sign-in part before they are stored: a query can carry a token, a search or a document key.</p>
+
+<h2 id="deleting"><span class="n">3.4</span>Deleting, and staying deleted</h2>
+<p>Raw records older than the retention window (14 days by default) are deleted; the distilled model is kept. The owner can also forget the last few minutes by command. Both are easy until there is a search index, which is a second copy.</p>
+<p>The index is therefore treated as a cache. When anything is deleted from the raw files, a marker is left; the next time the index is touched it is thrown away and built again from what remains. A test writes a word, searches for it, forgets it, and then reads every byte of the raw folder and the index file to check that the word is gone.</p>
+<p>The data folder itself may not be inside a synced folder. The program refuses to start if it is, because a folder that syncs is a folder copied to someone else's computer.</p>
+
+<div class="box caution"><div class="label">What went wrong</div>
+<p>The test that checks a forgotten word is gone from the whole folder failed, correctly: the word was in the access log, as the search a client had made for it. The log is meant to keep what was asked. The test now checks the raw files and the index, and the log is left alone. Whether a question is itself something to forget is a decision the owner has not been asked to make yet.</p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>A rule that matters is a function that runs first, with a test that fails without it.</li>
+<li>Pause, identify, exclude, and only then read. An excluded window leaves a gap, not a record.</li>
+<li>Secrets are removed by shape before writing, erring towards removing.</li>
+<li>An index is a cache: delete from the source, then rebuild.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>The title rule excludes any window whose title mentions net banking. Give an ordinary window it would wrongly exclude. Is that the right direction to be wrong in?</li>
+<li>The recorder leaves a gap where an excluded program was in front. What does the length of a gap reveal? Design a way to hide it and name what that would cost.</li>
+<li>Write a secret that the removal function would miss, and one ordinary string it would wrongly remove.</li>
+<li>Extend the code: let the owner mark a site as "titles only". Where in the order of checks does it go?</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a href="capture.html"><span class="dir">Previous</span>2. Capture: what a computer will tell you about its owner</a><a class="next" href="whose-words.html"><span class="dir">Next</span>4. Whose words are whose</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

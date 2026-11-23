@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to read the evidence | A personal context service</title>
+<meta name="description" content="The evidence grades used across this site.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame plain"><main><article class="text"><header class="opener">
+<div class="part">Front matter</div>
+<h1>How to read the evidence</h1>
+<p class="lede">A record of a build is only useful if the reader can tell what was observed from what was assumed. This page defines the four grades used on every page of the site.</p>
+</header>
+
+<h2 id="why">Why grade claims at all</h2>
+<p>Writing about software that watches a computer mixes three kinds of statement that look alike on the page: things someone measured, things a company said about its own product, and things that sound right. A reader who cannot tell them apart will copy mistakes. So each claim here carries a small label saying how it is known.</p>
+
+<h2 id="grades">The four grades</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Label</th><th>Meaning</th><th>How much to trust it</th></tr></thead>
+<tbody>
+<tr><th><span class="g v">Verified</span></th><td>Read on the vendor's own documentation, licence, pricing page or source code on the date given, or measured here with the method stated.</td><td>High for what the page says. A licence proves the terms, not the quality.</td></tr>
+<tr><th><span class="g s">Secondary</span></th><td>Reported by the press, a comparison site, or papers whose authors built the systems they score.</td><td>Moderate. Often right, sometimes stale, occasionally written to sell something.</td></tr>
+<tr><th><span class="g c">Maker's claim</span></th><td>Stated by the company about its own product, with no independent check.</td><td>Treat as a hypothesis. <a href="what-a-user-model-is.html">Chapter 1</a> quotes several and says which were checked.</td></tr>
+<tr><th><span class="g u">Not tested</span></th><td>Planned, designed or written, but never run here.</td><td>None yet. It tells you what is intended, not what happens.</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="rules">Three rules that follow</h2>
+<ol>
+<li>Numbers come with their sample. "9 of 10" and "90%" are different statements. Where a count is known it is given.</li>
+<li>A rule scored on the cases it was tuned on is reported beside its score on cases written afterwards. <a href="measuring.html">Chapter 7</a> shows a rule that scored 30 of 30 on the first and 4 of 10 on the second.</li>
+<li>A test with a pretend Windows or a pretend model proves the rule, not the world. Where something was run on the real machine, the page says so; where it was not, it says that.</li>
+</ol>
+
+<h2 id="who">Who "the owner" is</h2>
+<p>The chapters refer to "the owner": the one person whose computer the system runs on. Nothing from the owner's real screen appears anywhere on this site or in the test data. Every example, name and number in an example is made up.</p>
+<p><a href="book.html">Back to the contents</a></p>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>

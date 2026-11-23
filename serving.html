@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6. Serving: keys, rooms and a log | A personal context service</title>
+<meta name="description" content="How a local service lets agents read without letting them roam: a token per client, scopes as rooms, approval one request at a time, tools an agent can run unasked, and a record of everything that was given.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Personal context</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#problem"><span class="n">6.1</span>The problem: one store, several readers, different trust</a></li><li><a href="#protocol"><span class="n">6.2</span>The protocol, bought</a></li><li><a href="#keys"><span class="n">6.3</span>Keys and rooms</a></li><li><a href="#door"><span class="n">6.4</span>The one door</a></li><li><a href="#tools"><span class="n">6.5</span>Tools an agent will run unasked</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li class="here"><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="measuring.html"><span class="n">7</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">8</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part III · Use</div>
+<div class="chno">Chapter 6</div>
+<h1>Serving: keys, rooms and a log</h1>
+<p class="lede">How a local service lets agents read without letting them roam: a token per client, scopes as rooms, approval one request at a time, tools an agent can run unasked, and a record of everything that was given.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Offer a local store to agents through a standard protocol, on one machine only.</li>
+<li>Give each agent its own key and limit what the key opens.</li>
+<li>Make every request pass the same five steps in the same order.</li>
+<li>Name and label tools so that a careful agent will run them without asking its owner each time.</li>
+</ul></div>
+
+<h2 id="problem"><span class="n">6.1</span>The problem: one store, several readers, different trust</h2>
+<p>A model of a person is useful only if agents can read it, and dangerous if any program can. A single shared key gives every reader everything. The arrangement here is that of a house: each visitor has a key of their own, a key opens some rooms and not others, and some visitors must knock every time.</p>
+
+<h2 id="protocol"><span class="n">6.2</span>The protocol, bought</h2>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms"><dt>Model Context Protocol (MCP)</dt><dd>An open protocol by which a program offers tools to an agent: a list of tools, each with a name, a description and the inputs it takes, and a way to call one. An agent that speaks it can use a server it has never seen.</dd></dl></div>
+<p>The service is such a server, over HTTP, bound to the address <code>127.0.0.1</code>: reachable from this machine and from nowhere else. That address is a constant in the source, not a setting. The protocol, the transport and the check of the bearer token are the official SDK's; what was written here is the list of tools and what stands behind them.</p>
+
+<h2 id="keys"><span class="n">6.3</span>Keys and rooms</h2>
+<div class="tablewrap"><table>
+<caption><b>Table 6.1.</b> The five scopes.</caption>
+<thead><tr><th>Scope</th><th>Opens</th></tr></thead>
+<tbody>
+<tr><th><code>now</code></th><td>the last three hours: programs, windows, sites, files</td></tr>
+<tr><th><code>history</code></th><td>the same, further back, and search over it</td></tr>
+<tr><th><code>profile</code></th><td>the kept model: projects, people, the owner's own notes, what a model inferred</td></tr>
+<tr><th><code>writing</code></th><td>passages the owner typed</td></tr>
+<tr><th><code>screen_text</code></th><td>text that was on the owner's screen</td></tr>
+</tbody></table></div>
+<p>A client is a name, a token and a list of scopes. The token is shown once, when it is granted; only its hash is stored, so reading the settings file does not yield a working key. Revoking a client stops its token at the next request.</p>
+<p>A client also has one of two modes. In <em>browse</em> it may call anything its scopes allow. In <em>ask</em>, every single request waits for the owner to approve it. An approval is for that exact request, is used up by one answer, and lapses in ten minutes; asking again does not get round it.</p>
+
+<h2 id="door"><span class="n">6.4</span>The one door</h2>
+<p>Every call, from any client, goes through one function, in this order:</p>
+<ol>
+<li><b>Token.</b> No valid token: the server answers 401 and nothing else happens.</li>
+<li><b>Approval</b>, for a client in ask mode. Until the owner says yes, the client learns only that it must wait.</li>
+<li><b>Scope.</b> A tool the client's scopes do not cover returns a refusal that names the missing scope, and nothing more.</li>
+<li><b>The answer</b>, in its envelope: a fixed notice, the time, whether recording is paused, and the items with their provenance (<a href="whose-words.html">Chapter 4</a>).</li>
+<li><b>The log.</b> One line per request, allowed or refused: who, which tool, with what inputs, how many items of each kind were given, their record ids, and how many pieces were withheld.</li>
+</ol>
+<p>The log holds record ids and counts, not the text served. It is a record of what was given without being a second copy of it.</p>
+
+<h2 id="tools"><span class="n">6.5</span>Tools an agent will run unasked</h2>
+<p>A careful agent does not run an unknown tool without asking its owner. The assistant this service was built beside sorts a server's tools by a simple rule: a tool runs unasked only if the server labels it read-only <em>and</em> its name begins with a reading word such as get, search or lookup. Anything else is put to the owner each time.</p>
+<p>So all seven tools here are labelled read-only and named accordingly: <code>whoami</code>, <code>get_recent_activity</code>, <code>search_activity</code>, <code>lookup_person_or_project</code>, <code>get_writing_samples</code>, <code>get_profile</code>, <code>get_day_summary</code>. Run through that assistant's own connection code, all seven were sorted as "runs at once", and it read the last hour. <span class="g v">Verified</span>, 23 November 2026.</p>
+<pre><code>READ = dict(read_only_hint=True, destructive_hint=False, idempotent_hint=True, open_world_hint=False)
+
+@mcp.tool(title="What the owner was just doing", annotations=ToolAnnotations(title="What the owner was just doing", **READ),
+          description="What the owner has been working on in the last `minutes` (default 60): ...")
+def get_recent_activity(minutes: int = 60) -&gt; str:
+    return run("get_recent_activity", minutes=minutes)</code></pre>
+<p>The descriptions are written once, by hand. Nothing captured ever appears in one, because an agent reads a tool's description as guidance.</p>
+
+<div class="box caution"><div class="label">What went wrong</div>
+<p>That assistant connects to new servers from its chat, and refuses any address that is not https or does not lead to a public server. Both refusals are right for a stranger's server and both exclude a service on the same machine. Connecting needed one entry in the assistant's own list of known services, marked as local so that it is known only to the person whose folder holds a token for it. A local service and a careful client have to be introduced by their owner; neither should find the other by itself.</p></div>
+
+<div class="box summary"><div class="label">Summary</div>
+<ul>
+<li>Serve on this machine only, through an open protocol, with the transport and token check bought.</li>
+<li>One key per client, hashed; scopes as rooms; an ask mode for visitors.</li>
+<li>Token, approval, scope, answer, log: one function, one order.</li>
+<li>Label tools read-only and name them as reads, and write their descriptions by hand.</li>
+</ul></div>
+
+<div class="box exercises"><div class="label">Exercises</div>
+<ol>
+<li>The log keeps the inputs of every request. Give a case in which the inputs themselves are private. What would you keep in their place?</li>
+<li>An approval is tied to the exact inputs of a request. Why not approve "this client, for ten minutes"?</li>
+<li>Another program on the same machine can reach the server's port. What stops it reading the model? What does not?</li>
+<li>Extend the code: add a scope that allows search but only over the last day. Where is the one place it must be enforced?</li>
+</ol></div>
+
+<nav class="pager" aria-label="Chapters"><a href="search-and-memory.html"><span class="dir">Previous</span>5. Search, and a memory that is kept up</a><a class="next" href="measuring.html"><span class="dir">Next</span>7. Measuring it</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+</div></footer>
+</body>
+</html>
