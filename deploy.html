@@ -57,6 +57,11 @@
 <p>An icon with two circles appears near the clock. Click it, or run this, and your browser opens a page that only you can reach (<a href="the-owners-page.html">Chapter 7</a>):</p>
 <div class="cmd"><pre><code>athena.cmd open</code></pre></div>
 <p>The page shows the last hour as an agent would be given it, who has a key, anything waiting for your yes, what is held about you, and the log. Everything in the steps below can be done there; the commands are given because they are easier to copy.</p>
+<h2>Add your mail and calendar (optional)</h2>
+<p>Athena can read a Google account's mail and calendar with a right to read and nothing more (<a href="mail-and-calendar.html">Chapter 8</a>). Google first has to know which program is asking, and for a program you run yourself you make that registration: in Google Cloud Console, create a project, switch on the Gmail API and the Google Calendar API, set up the consent screen as External and add yourself as a test user, and create an OAuth client of type Desktop app. While the consent screen is in "testing" a sign-in lapses after seven days; to make it last, publish it, for which Google asks for a home page and a privacy policy link on its branding page. Download its JSON, then:</p>
+<div class="cmd"><pre><code>athena.cmd account client path\to\downloaded.json
+athena.cmd account add google</code></pre></div>
+<p>Your browser opens Google's own sign-in page. Athena never sees your password. <code>athena.cmd account</code> lists what is signed in and what was read; <code>athena.cmd account remove you@example.com --forget</code> signs out and deletes what was read.</p>
 <h2>Tell it what never to record</h2>
 <p>Password managers, banks, brokerages, sign-in pages and private browser windows are excluded from the start (<a href="privacy-held-by-code.html">Chapter 3</a>). Add your own:</p>
 <div class="cmd"><pre><code>athena.cmd exclude app signal*
@@ -109,11 +114,11 @@ athena.cmd approve 3fa9c1</code></pre></div>
 <h2>Checking your own copy</h2>
 <div class="cmd"><pre><code>%USERPROFILE%\.athena\venv\Scripts\python -m pytest
 %USERPROFILE%\.athena\venv\Scripts\python -m evals.run</code></pre></div>
-<p>The first runs the 109 tests. The second scores search, the privacy rules and the attribution of typed text on a made-up fortnight and prints quality beside cost (<a href="measuring.html">Chapter 8</a>).</p>
+<p>The first runs the 130 tests. The second scores search, the privacy rules and the attribution of typed text on a made-up fortnight and prints quality beside cost (<a href="measuring.html">Chapter 9</a>).</p>
 </article></main>
 <footer><div>
 <p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
-<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a></nav>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a><a href="privacy.html">Privacy</a></nav>
 </div></footer>
 </body>
 </html>

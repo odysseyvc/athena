@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy | Athena</title>
+<meta name="description" content="What a copy of the program records, where it keeps it, and how Google user data is handled.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Athena</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame plain"><main><article class="text"><p class="eyebrow">Privacy</p>
+<h1>Privacy policy</h1>
+<p>Athena is a program a person runs on their own Windows machine. There is no Athena service on the internet: the project runs no server, has no accounts, and receives nothing from any copy of the program. Whoever runs a copy is the only party that holds what that copy records. This page says what a copy records, where it keeps it, and how to remove it.</p>
+
+<h2>What a copy records</h2>
+<ul>
+<li><b>From the machine it runs on:</b> which program and window were in front, text the owner typed or pasted, and text that was on screen, each subject to the owner's never-record lists and to the removal of keys, codes, card and account numbers before anything is written (<a href="privacy-held-by-code.html">Chapter 3</a>).</li>
+<li><b>From an account the owner signs in, if they choose to sign one in:</b> mail and calendar entries, read-only (<a href="mail-and-calendar.html">Chapter 8</a>).</li>
+</ul>
+
+<h2 id="google">Google user data</h2>
+<p>If the owner signs a Google account in, Athena asks Google for two rights and no others: to read mail (<code>gmail.readonly</code>) and to read calendars (<code>calendar.readonly</code>). It refuses to keep a sign-in that comes back with anything wider. It cannot send, delete or change anything in the account.</p>
+<ul>
+<li><b>What is read.</b> Messages and calendar entries from the stretch of days the owner's settings keep. Spam, the bin, drafts, promotions and social mail are not fetched. Messages from senders or with subjects on the owner's never-record lists (codes, password resets, sign-in notices, statements, banks) are not written down. Attachments are recorded as file names; their contents are never fetched.</li>
+<li><b>How it is used.</b> Only to answer the owner, and the agents the owner has let in, about the owner's own recent mail and calendar. It is not used for advertising, not used to train any model, and not shown to any language model by Athena itself.</li>
+<li><b>Where it is kept.</b> In a folder on the owner's machine, and nowhere else. The key that renews the sign-in is encrypted with Windows' per-user protection, so the file opens only for that Windows user on that machine.</li>
+<li><b>Who it is shared with.</b> Nobody, by Athena. It is served only on the machine itself (address <code>127.0.0.1</code>), read-only, to an agent the owner has approved and given the <code>mail</code> or <code>calendar</code> scope. What that agent then does with it is governed by that agent's own terms. No person other than the owner reads it.</li>
+<li><b>How long it is kept.</b> For the number of days in the owner's settings, after which it is deleted.</li>
+<li><b>How to remove it.</b> <code>athena account remove &lt;address&gt; --forget</code>, or "Sign out and delete what was read" on the owner's page, signs out, tells Google the sign-in is void, and deletes everything that was read. Access can also be withdrawn at any time under third-party access in the Google Account.</li>
+</ul>
+<p>Athena's use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+<h2>This website</h2>
+<p>This site is static pages served by GitHub Pages. It sets no cookies and runs no analytics. GitHub, as the host, may log requests as described in its own privacy statement.</p>
+
+<h2>Questions</h2>
+<p>Open an issue on the project's repository, linked from <a href="deploy.html">Run your own</a>.</p>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a><a href="privacy.html">Privacy</a></nav>
+</div></footer>
+</body>
+</html>

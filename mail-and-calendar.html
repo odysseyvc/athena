@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8. Mail and calendar: reading an account without holding its keys | Athena</title>
+<meta name="description" content="How a program on your own machine reads your mail and calendar with a right to read and nothing more: a sign-in it never sees, a renewal key that opens on one machine only, the messages that are never written, whose words are whose when strangers write to you by name, and how to store an event that keeps changing.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a5f' stroke-width='2'%3E%3Ccircle cx='9' cy='12' r='6'/%3E%3Ccircle cx='15' cy='12' r='6' fill='%231f3a5f' fill-opacity='0.18'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="masthead"><div class="masthead-inner">
+<a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6" fill="currentColor" fill-opacity="0.18"/></svg>Athena</a>
+<nav aria-label="Site"><a href="index.html" class="hide-sm">Product</a><a href="book.html" aria-current="page">The book</a><a href="deploy.html" class="go">Run your own</a></nav>
+</div></header>
+<div class="frame"><aside class="rail"><div class="rail-inner"><h2>In this chapter</h2><ol><li><a href="#why"><span class="n">8.1</span>Why the screen is not enough</a></li><li><a href="#signin"><span class="n">8.2</span>Asking only to read</a></li><li><a href="#leftout"><span class="n">8.3</span>What is never written</a></li><li><a href="#whose"><span class="n">8.4</span>Whose words, decided by the account</a></li><li><a href="#changes"><span class="n">8.5</span>Storing something that changes</a></li><li><a href="#rooms"><span class="n">8.6</span>Two more rooms</a></li><li><a href="#state"><span class="n">8.7</span>What has and has not been checked</a></li></ol><div class="book"><h2>The book</h2><ol><li><a href="what-a-user-model-is.html"><span class="n">1</span>What a portable user model is</a></li><li><a href="capture.html"><span class="n">2</span>Capture: what a computer will tell you about its owner</a></li><li><a href="privacy-held-by-code.html"><span class="n">3</span>Privacy rules held by code</a></li><li><a href="whose-words.html"><span class="n">4</span>Whose words are whose</a></li><li><a href="search-and-memory.html"><span class="n">5</span>Search, and a memory that is kept up</a></li><li><a href="serving.html"><span class="n">6</span>Serving: keys, rooms and a log</a></li><li><a href="the-owners-page.html"><span class="n">7</span>The owner&#x27;s page, and agents that start a command</a></li><li class="here"><a href="mail-and-calendar.html"><span class="n">8</span>Mail and calendar: reading an account without holding its keys</a></li><li><a href="measuring.html"><span class="n">9</span>Measuring it</a></li><li><a href="what-is-built.html"><span class="n">10</span>What is built</a></li></ol></div></div></aside>
+<main><article class="text">
+<header class="opener">
+<div class="part">Part III · Use</div>
+<div class="chno">Chapter 8</div>
+<h1>Mail and calendar: reading an account without holding its keys</h1>
+<p class="lede">How a program on your own machine reads your mail and calendar with a right to read and nothing more: a sign-in it never sees, a renewal key that opens on one machine only, the messages that are never written, whose words are whose when strangers write to you by name, and how to store an event that keeps changing.</p>
+</header>
+<div class="box objectives"><div class="label">After this chapter you should be able to</div>
+<ul>
+<li>Let a program on a person's own machine read their mail and calendar without it ever seeing a password or being able to send anything.</li>
+<li>Keep the one lasting secret of a sign-in so that the file is useless anywhere else.</li>
+<li>Decide, by code, which messages are never written down and what is cut from the rest.</li>
+<li>Tell the owner's own words from other people's by the account a message came from, not by what it says.</li>
+<li>Store something that changes after it is made, such as a calendar event, in files that are only ever added to.</li>
+</ul></div>
+
+<h2 id="why"><span class="n">8.1</span>Why the screen is not enough</h2>
+<p>Watching the screen (<a href="capture.html">Chapter 2</a>) records what a person looked at. It misses most of what was sent to them, and it sees a calendar only when the calendar happens to be open. Mail and calendar say who and when in a way a window title cannot: who the owner writes to, what they agreed to attend, what is coming on Thursday. They are also the two places where the most text written by strangers arrives, addressed to the owner by name. So this source brings the largest gain and the largest risk together, and the rules of <a href="whose-words.html">Chapter 4</a> have to hold here before anything else.</p>
+
+<h2 id="signin"><span class="n">8.2</span>Asking only to read</h2>
+<p>There are three ways a local program can get at a mailbox, and they differ in what the program ends up holding.</p>
+<div class="box definition"><div class="label">Definition</div>
+<dl class="terms">
+<dt>App password</dt><dd>A second password for the whole mailbox, made in the account's settings. Quick to set up. Whoever holds it can read, send and delete, and it skips the second step of sign-in.</dd>
+<dt>A connector service</dt><dd>A company that holds the sign-in for you and answers requests on your behalf. Nothing to set up, but every message passes through a third party, and each request is billed.</dd>
+<dt>OAuth with a read scope</dt><dd>The owner signs in on the mail service's own page and approves a named, limited right. The program receives a key that can do only that, and the service enforces the limit.</dd>
+</dl></div>
+<p>Athena uses the third. It asks for two rights, to read mail and to read the calendar, and the code refuses to keep a sign-in that came back with anything wider. The limit is therefore not a promise made by Athena: the mail service will not accept a send or a delete from this key whatever the program does.</p>
+<p>The sign-in itself follows what the services ask of a program on a desktop. The browser is sent to the service. The answer comes back to an address on the same machine that exists for a few minutes and then closes. A one-time proof, made before the browser was opened and checked by the service at the end, ties the answer to the request, so another program that catches the answer cannot use it. An answer that does not carry this sign-in's own mark is refused before anything is spent.</p>
+<p>What is left afterwards is a renewal key. It is encrypted with Windows' own per-user protection before it is written, so the file opens only for the same Windows user on the same machine. Copy the data folder elsewhere and the mail is not reachable from it.</p>
+<div class="box caution"><div class="label">A cost of doing it this way</div>
+<p>A service has to know which program is asking. A company shipping to thousands registers once and passes a security review. A program you run for yourself has no such registration, so the owner makes one, in the service's developer console, before the first sign-in. That is a quarter of an hour of clicking that the other two routes do not need. It is the price of holding no more than a right to read.</p></div>
+
+<h2 id="leftout"><span class="n">8.3</span>What is never written</h2>
+<p>A mailbox holds things a screen recorder would rarely catch: one-time codes, password-reset links, bank statements, payslips. The rules that kept those off the disk in <a href="privacy-held-by-code.html">Chapter 3</a> are applied again here, with three additions that only make sense for mail.</p>
+<ul>
+<li><b>Left out whole.</b> Anything labelled spam, bin, draft or promotion. Anything from a sender on the never-record list, which is the list of sites already used for windows, applied to the sender's domain, plus patterns for addresses that send alerts and codes. Anything whose subject says it is a code, a reset, a sign-in notice or a statement. For such a message nothing is kept, not the sender and not the subject; only a count goes up.</li>
+<li><b>Cut from what is kept.</b> Earlier messages quoted underneath, and forwarded ones, so that a message holds its author's words only. Text that the HTML hides from a human reader (zero size, invisible, a hidden preheader), because nobody chose to send the owner words they cannot see, and hidden text is where instructions to an assistant are put. The query of every web address, since reset and unsubscribe links are keys. Then the usual removal of keys, codes, card and account numbers.</li>
+<li><b>Names only.</b> An attachment is recorded as a file name. Its contents are never fetched.</li>
+</ul>
+<p>A pause covers mail as well. While recording is paused, no service is asked anything. And a message that arrived during a pause is not recorded when recording resumes, because each pause is written down as a stretch of time and arrivals are checked against it.</p>
+
+<h2 id="whose"><span class="n">8.4</span>Whose words, decided by the account</h2>
+<p>For screen text the question of who wrote something was settled by how it was observed. For mail it is settled by the account. A message sent from the owner's own address is theirs. Every other message is somebody else's, however it is worded, and is served inside the same quoting as any text that was merely on screen, with the same check that withholds text reading as an order to an assistant.</p>
+<p>Three details follow from taking that seriously.</p>
+<ul>
+<li>A sender chooses their own display name, so a name is someone else's text and is quoted and checked like a body. An address is served as it is only because it was checked to be shaped like an address.</li>
+<li>The owner's own sent message is checked too. If what remains after the quoted part was cut still reads as an order, the cutting may have missed something that was not theirs, and it is withheld.</li>
+<li>A calendar invitation the owner has not accepted says nothing about them. Anyone can send one. It is marked as an invitation, not as an event in the owner's day, until the owner accepts it. The same rule decides who counts as a contact: someone the owner wrote to, or met by an event they made or accepted. A stranger who writes fifty times is not a contact.</li>
+</ul>
+
+<h2 id="changes"><span class="n">8.5</span>Storing something that changes</h2>
+<p>Everything else in the folder is written once and never altered, which is what lets a record's id say where it is. A calendar event breaks that: it is renamed, moved, deleted. Rewriting old lines would break every id after them.</p>
+<p>So an event is filed under the day it starts, and every change is a new line. The newest line for an event wins. When an event moves to another day, a short line saying "moved" is added on the old day, and when it disappears from the calendar a line saying "cancelled" is added, so a reader of one day alone never sees a stale event. Search keeps a list of which line is the newest for each event and drops hits on any other.</p>
+
+<h2 id="rooms"><span class="n">8.6</span>Two more rooms</h2>
+<p>Mail and calendar are scopes of their own (<a href="serving.html">Chapter 6</a>). An agent that was let in before this existed has neither, and gets neither by default. Without the scope, mail does not appear in search, in the answer about a person, or in the list of who the owner wrote to; with it, two more read-only tools answer for recent mail and for the calendar.</p>
+
+<h2 id="state"><span class="n">8.7</span>What has and has not been checked</h2>
+<p>All of this is tested against a pretend mail service: the sign-in, the refusals, what is left out, what is cut, the marks, the scopes, signing out and deleting what was read. It has also met one real Google account, once, and that meeting taught three things the pretend service had not.</p>
+<ul>
+<li><b>"Slow down" does not always arrive as the code for it.</b> The first read stopped after about two hundred requests on an answer of 403, which usually means "you may not", carrying a reason that meant "too fast". The code now reads the reason, waits and asks again, with longer waits each time.</li>
+<li><b>A read that stops part way must keep its place.</b> The list of messages already looked at was saved only at the end of a pass, so a pass that failed would have read the same messages again and stored them twice. Now what was read before the failure is kept and remembered, and the rest waits for the next pass.</li>
+<li><b>Do not fetch what you will throw away.</b> Most of those first requests fetched promotions in full only to leave them out. The labels that are never kept are now excluded in the question put to the service, so those messages are never fetched.</li>
+</ul>
+<p>On that one mailbox, a few hundred messages were kept, about a fifth of those looked at were left out by sender or subject, and a check by pattern found no kept message still holding a quoted reply or the query of a web address. That is one account on one day, checked by pattern and not by reading. Other services, a busy day, and a week of use are still untried. <a href="what-is-built.html">Chapter 10</a> carries the state as it changes.</p>
+<div class="box caution"><div class="label">Two things the registration costs that the tests could not show</div>
+<p>A registration left in the service's "testing" state gives sign-ins that lapse after seven days. To make them last, the registration has to be published, and the service will not publish one without a public home page and a public privacy policy. So even a program for one person ends up needing a web page that says what it does with the data.</p></div>
+
+<nav class="pager" aria-label="Chapters"><a href="the-owners-page.html"><span class="dir">Previous</span>7. The owner&#x27;s page, and agents that start a command</a><a class="next" href="measuring.html"><span class="dir">Next</span>9. Measuring it</a></nav>
+</article></main></div>
+<footer><div>
+<p>Every factual claim on this site carries an evidence grade, and anything not yet run is marked as such.</p>
+<nav aria-label="Footer"><a href="book.html">The book</a><a href="what-is-built.html">What is built</a><a href="deploy.html">Run your own</a><a href="evidence.html">How to read the evidence</a><a href="privacy.html">Privacy</a></nav>
+</div></footer>
+</body>
+</html>
