@@ -72,7 +72,7 @@
 <p>So an event is filed under the day it starts, and every change is a new line. The newest line for an event wins. When an event moves to another day, a short line saying "moved" is added on the old day, and when it disappears from the calendar a line saying "cancelled" is added, so a reader of one day alone never sees a stale event. Search keeps a list of which line is the newest for each event and drops hits on any other.</p>
 
 <h2 id="rooms"><span class="n">8.6</span>Two more rooms</h2>
-<p>Mail and calendar are scopes of their own (<a href="serving.html">Chapter 6</a>). An agent that was let in before this existed has neither, and gets neither by default. Without the scope, mail does not appear in search, in the answer about a person, or in the list of who the owner wrote to; with it, two more read-only tools answer for recent mail and for the calendar.</p>
+<p>Mail and calendar are scopes of their own (<a href="serving.html">Chapter 6</a>). An agent that was let in before this existed has neither, and gets neither by default. Without the scope, mail does not appear in search, in the answer about a person, or in the list of who the owner wrote to; with it, three more read-only tools answer for recent mail, for the calendar, and for conversations left hanging.</p>
 
 <h2 id="state"><span class="n">8.7</span>What has and has not been checked</h2>
 <p>All of this is tested against a pretend mail service: the sign-in, the refusals, what is left out, what is cut, the marks, the scopes, signing out and deleting what was read. It has also met one real Google account, once, and that meeting taught three things the pretend service had not.</p>
@@ -81,7 +81,16 @@
 <li><b>A read that stops part way must keep its place.</b> The list of messages already looked at was saved only at the end of a pass, so a pass that failed would have read the same messages again and stored them twice. Now what was read before the failure is kept and remembered, and the rest waits for the next pass.</li>
 <li><b>Do not fetch what you will throw away.</b> Most of those first requests fetched promotions in full only to leave them out. The labels that are never kept are now excluded in the question put to the service, so those messages are never fetched.</li>
 </ul>
-<p>On that one mailbox, a few hundred messages were kept, about a fifth of those looked at were left out by sender or subject, and a check by pattern found no kept message still holding a quoted reply or the query of a web address. That is one account on one day, checked by pattern and not by reading. Other services, a busy day, and a week of use are still untried. <a href="what-is-built.html">Chapter 10</a> carries the state as it changes.</p>
+<p>Reading further back, 180 days instead of fourteen, taught five more.</p>
+<ul>
+<li><b>Most mail is not from people.</b> In a personal mailbox nearly all of it is sent by programs: notices, receipts, newsletters. Served newest first, the few messages a person wrote are buried. So each message is marked by what it says of itself (a mailing-list header, "Precedence: bulk", "Auto-Submitted"), by where the service filed it, and by its sender's address, never by its wording, and what people wrote is served first.</li>
+<li><b>A long message kept whole is still lost if it is indexed whole.</b> Found by its subject two times in three, by words from its body one time in five. Indexed in passages that each carry the subject, it is found nearly always by the one and two times in three by the other (<a href="measuring.html">Chapter 9</a>).</li>
+<li><b>A quarter of messages were being cut short</b> at a length chosen before any real message was seen. The limit is now ten times higher and cuts one in a thousand.</li>
+<li><b>One message a second is hours.</b> Asked for one after another, on a new connection each time, half a year of mail takes an afternoon. On one kept connection, six at a time, it is minutes of work, well inside what the service allows.</li>
+<li><b>A label is a number until you ask its name.</b> The owner's own labels arrive as opaque ids. Their names are the owner's own sorting of their mail, and cost one request a pass.</li>
+</ul>
+<p>From the same order of messages comes one more answer, worked out by code: which conversations are left hanging. A thread whose last word is somebody else's, not a program's, may need the owner's reply; one whose last word is the owner's is waiting on someone. It is a list to check, not a list of duties: a thread answered by a call still shows.</p>
+<p>All of this is one account, checked by pattern and by counting, not by reading. Other services and a week of use are still untried. <a href="what-is-built.html">Chapter 10</a> carries the state as it changes.</p>
 <div class="box caution"><div class="label">Two things the registration costs that the tests could not show</div>
 <p>A registration left in the service's "testing" state gives sign-ins that lapse after seven days. To make them last, the registration has to be published, and the service will not publish one without a public home page and a public privacy policy. So even a program for one person ends up needing a web page that says what it does with the data.</p></div>
 

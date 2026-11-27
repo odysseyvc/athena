@@ -60,13 +60,14 @@ out.append({"score": score[rowid] * (1 + 0.15 * math.exp(-age_days / 3)), ...})<
 <caption><b>Table 5.1.</b> How often a right record was among the first five results, on 24 keyword questions and 48 asked in other words. <span class="g v">Verified</span>, 23 November 2026, one laptop.</caption>
 <thead><tr><th>Search</th><th>Question uses the words</th><th>Asked in other words</th><th>Time per question</th></tr></thead>
 <tbody>
-<tr><th>Every word must appear</th><td>42%</td><td>0%</td><td>45 ms</td></tr>
-<tr><th>Ranked words</th><td>100%</td><td>46%</td><td>34 ms</td></tr>
-<tr><th>Words and meaning, 30 MB model</th><td>100%</td><td>71%</td><td>31 ms</td></tr>
-<tr><th>Words and meaning, 67 MB model</th><td>100%</td><td>73%</td><td>155 ms</td></tr>
-<tr><th>Either, then a reranking model</th><td>100%</td><td>54 to 60%</td><td>0.7 to 1.5 s</td></tr>
+<tr><th>Every word must appear</th><td>42%</td><td>0%</td><td>43 ms</td></tr>
+<tr><th>Ranked words</th><td>100%</td><td>29%</td><td>4 ms</td></tr>
+<tr><th>Words and meaning, 30 MB model</th><td>100%</td><td>71%</td><td>6 ms</td></tr>
+<tr><th>Words and meaning, 67 MB model</th><td>100%</td><td>69%</td><td>51 ms</td></tr>
+<tr><th>Words and meaning, the best of three other models</th><td>100%</td><td>73%</td><td>53 ms</td></tr>
+<tr><th>Either, then a reranking model</th><td>100%</td><td>60 to 63%</td><td>0.4 to 0.5 s</td></tr>
 </tbody></table></div>
-<p>The small model is the default. The next one up found one more answer in 48 at five times the time. Three other models of similar size were tried and did no better.</p>
+<p>The small model is the default. The best of the others found one more answer in 48 at eight times the time. These figures are from a second run, on 28 November 2026, after three changes that a real folder forced (<a href="measuring.html">Chapter 9</a>): the two rankings are weighted two to one for the words, the embeddings are held in memory, and very common words are no longer matched. The last is why ranked words alone fell from 46% to 29% on the questions asked in other words: words like "the" had been finding a few answers by accident, and on a large folder matching them was most of the time a search took.</p>
 <p>The reranker, a second model that reads the question beside each of the best thirty entries, made the results worse while taking twenty times as long. The likely reason is that it was trained on web questions and passages, and the entries here are window titles and scraps of screens. Whatever the reason, the measurement decided.</p>
 
 <h2 id="memory"><span class="n">5.5</span>A memory that is kept up</h2>
@@ -92,7 +93,7 @@ out.append({"score": score[rowid] * (1 + 0.15 * math.exp(-age_days / 3)), ...})<
 
 <div class="box summary"><div class="label">Summary</div>
 <ul>
-<li>Requiring every word found 42% and 0%. Ranked words found 100% and 46%. Words and meaning found 100% and 71%.</li>
+<li>Requiring every word found 42% and 0%. Ranked words found 100% and 29%. Words and meaning found 100% and 71%.</li>
 <li>A model of 30 MB on the processor was enough; a larger one and a reranker did not earn their cost.</li>
 <li>A memory is kept by operations that code checks, and nothing is deleted from it.</li>
 <li>Join names only when there is one candidate.</li>

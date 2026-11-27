@@ -23,7 +23,7 @@
 <h1>What is built</h1>
 <p class="lede">Every part of the system with its present state: what runs every day, what has run once, what is written and never run, and what does not exist.</p>
 </header>
-<p>This chapter is a table. It is the place to check any claim made elsewhere on the site. "Runs" means it is running on the owner's machine now. "Run once" means it was run for real at least once and the result is reported in the chapter named. "Tests only" means its rules are covered by automated tests with a pretend Windows or a pretend model, and it has not been seen working on the real thing. As of 23 November 2026, with 131 tests passing.</p>
+<p>This chapter is a table. It is the place to check any claim made elsewhere on the site. "Runs" means it is running on the owner's machine now. "Run once" means it was run for real at least once and the result is reported in the chapter named. "Tests only" means its rules are covered by automated tests with a pretend Windows or a pretend model, and it has not been seen working on the real thing. As of 23 November 2026, with 140 tests passing.</p>
 
 <h2 id="capture"><span class="n">10.1</span>Capture</h2>
 <div class="tablewrap"><table>
@@ -70,12 +70,12 @@
 <div class="tablewrap"><table>
 <thead><tr><th>Part</th><th>State</th><th>Note</th></tr></thead>
 <tbody>
-<tr><th>Nine read-only tools over MCP, on this machine only</th><td><span class="chip live">Runs</span></td><td><a href="serving.html">Chapter 6</a></td></tr>
+<tr><th>Ten read-only tools over MCP, on this machine only</th><td><span class="chip live">Runs</span></td><td><a href="serving.html">Chapter 6</a></td></tr>
 <tr><th>A token and scopes per client; the log</th><td><span class="chip live">Runs</span></td><td>One agent connected.</td></tr>
 <tr><th>Approval of each request for a client in ask mode</th><td><span class="chip once">Tests only</span></td><td>No real client has been put in that mode.</td></tr>
 <tr><th>Provenance on every item; quoted text; withholding by patterns</th><td><span class="chip live">Runs</span></td><td><a href="whose-words.html">Chapter 4</a></td></tr>
 <tr><th>Withholding by a classifier model</th><td><span class="chip once">Run once</span></td><td>Off by default: about 1 GB of memory.</td></tr>
-<tr><th>Mail and calendar from a signed-in account: read-only sign-in, the rules, two scopes, two tools</th><td><span class="chip once">Run once</span></td><td><a href="mail-and-calendar.html">Chapter 8</a>. One real Google account signed in and read: a few hundred messages and a month of calendar. The first read failed on a rate limit and was fixed. Everything else is tests against a pretend service.</td></tr>
+<tr><th>Mail and calendar from a signed-in account: read-only sign-in, the rules, two scopes, two tools</th><td><span class="chip once">Run once</span></td><td><a href="mail-and-calendar.html">Chapter 8</a>. One real Google account signed in and 180 days of it read. Search over it is scored by code (<a href="measuring.html">Chapter 9</a>); nobody has read the answers for sense. Everything else is tests against a pretend service.</td></tr>
 <tr><th>The owner's page: status, approvals by a click, agents, what is known, forget, the log</th><td><span class="chip live">Runs</span></td><td><a href="the-owners-page.html">Chapter 7</a>. Seen working in one browser.</td></tr>
 <tr><th>The icon near the clock: pause, and a notice when a request waits</th><td><span class="chip once">Run once</span></td><td>It starts without error; nobody has yet clicked it for real.</td></tr>
 <tr><th>A command connector for agents that cannot call an address</th><td><span class="chip once">Tests only</span></td><td>Through the protocol's own client. No vendor's desktop assistant has been connected.</td></tr>
@@ -88,7 +88,7 @@
 <div class="tablewrap"><table>
 <thead><tr><th>Part</th><th>State</th><th>Note</th></tr></thead>
 <tbody>
-<tr><th>Automated tests</th><td><span class="chip live">Runs</span></td><td>131 pass.</td></tr>
+<tr><th>Automated tests</th><td><span class="chip live">Runs</span></td><td>140 pass.</td></tr>
 <tr><th>Evaluation on a made-up fortnight</th><td><span class="chip live">Runs</span></td><td><a href="measuring.html">Chapter 9</a></td></tr>
 <tr><th>Evaluation on real days</th><td><span class="chip dev">Not built</span></td><td>The most important thing missing.</td></tr>
 <tr><th>Cost over a full day</th><td><span class="chip dev">Not measured</span></td><td>The longest run was an hour and a half.</td></tr>
